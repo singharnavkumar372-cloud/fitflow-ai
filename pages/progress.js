@@ -1,8 +1,7 @@
 /* ============================================================
    FitFlow AI — Progress Tracker Page
+   Fixed: Chart reuse errors via App.safeChart
    ============================================================ */
-
-let progressChartInstances = {};
 
 function renderProgress() {
   const user = Auth.getCurrentUser();
@@ -14,10 +13,6 @@ function renderProgress() {
   const weightChange  = parseFloat((currentWeight - startWeight).toFixed(1));
   const totalWorkouts = user.workoutsCompleted || 0;
   const totalCal      = user.totalCalBurned || 0;
-
-  // Destroy old charts
-  Object.values(progressChartInstances).forEach(c => { try { c.destroy(); } catch(e){} });
-  progressChartInstances = {};
 
   const html = `
     <div class="page-header">
@@ -225,41 +220,36 @@ function setupProgressEvents() {
 function renderProgressCharts(user) {
   const history = user.weightHistory || [];
 
-  // Weight chart
+  // Weight chart — fixed canvas reuse with App.safeChart
   if (history.length >= 2) {
-    const ctx = document.getElementById('weight-history-chart');
-    if (ctx) {
-      progressChartInstances.weight = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: history.map(h => new Date(h.date + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})),
-          datasets: [{
-            label: 'Weight (kg)',
-            data: history.map(h => h.weight),
-            borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
-            borderWidth: 2.5, pointBackgroundColor: '#00d4ff',
-            pointRadius: 5, tension: 0.4, fill: true
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} },
-            y: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} }
-          }
+    App.safeChart('weight-history-chart', 'progress-weight', {
+      type: 'line',
+      data: {
+        labels: history.map(h => new Date(h.date + 'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})),
+        datasets: [{
+          label: 'Weight (kg)',
+          data: history.map(h => h.weight),
+          borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)',
+          borderWidth: 2.5, pointBackgroundColor: '#00d4ff',
+          pointRadius: 5, tension: 0.4, fill: true
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} },
+          y: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} }
         }
-      });
-    }
+      }
+    });
   }
 
-  // Workout frequency chart (simulated)
-  const workoutCtx = document.getElementById('workout-freq-chart');
-  if (workoutCtx) {
+  // Workout frequency chart
+  {
     const weeks = ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4', 'Wk 5', 'Wk 6', 'Wk 7', 'Wk 8'];
-    const total = user.workoutsCompleted || 0;
-    const spread = distributeWorkouts(total, 8);
-    progressChartInstances.workouts = new Chart(workoutCtx, {
+    const spread = distributeWorkouts(user.workoutsCompleted || 0, 8);
+    App.safeChart('workout-freq-chart', 'progress-workouts', {
       type: 'bar',
       data: {
         labels: weeks,
@@ -281,13 +271,11 @@ function renderProgressCharts(user) {
     });
   }
 
-  // Calories chart (simulated)
-  const calCtx = document.getElementById('cal-chart');
-  if (calCtx) {
+  // Calories chart
+  {
     const weeks = ['Wk 1', 'Wk 2', 'Wk 3', 'Wk 4', 'Wk 5', 'Wk 6', 'Wk 7', 'Wk 8'];
-    const totalCal = user.totalCalBurned || 0;
-    const spread = distributeWorkouts(totalCal, 8);
-    progressChartInstances.calories = new Chart(calCtx, {
+    const spread = distributeWorkouts(user.totalCalBurned || 0, 8);
+    App.safeChart('cal-chart', 'progress-calories', {
       type: 'bar',
       data: {
         labels: weeks,
