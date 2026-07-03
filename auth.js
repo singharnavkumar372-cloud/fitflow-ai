@@ -40,32 +40,31 @@ const Auth = {
     const bodyFat = this.estimateBodyFat(bmi, +age, gender);
 
     const user = {
-      id:               Date.now().toString(),
-      name:             name.trim(),
-      email:            email.trim().toLowerCase(),
+      id:                Date.now().toString(),
+      name:              name.trim(),
+      email:             email.trim().toLowerCase(),
       password,
-      age:              +age,
+      age:               +age,
       gender,
-      weight:           +weight,
-      height:           +height,
-      goal:             goal || 'general',
-      createdAt:        new Date().toISOString(),
-      /* Stats */
-      bmi,  bmr,  tdee,  bodyFat,
-      weightHistory: [{ date: todayStr(), weight: +weight }],
+      weight:            +weight,
+      height:            +height,
+      goal:              goal || 'general',
+      createdAt:         new Date().toISOString(),
+      bmi, bmr, tdee, bodyFat,
+      weightHistory:     [{ date: todayStr(), weight: +weight }],
       workoutsCompleted: 0,
       streakDays:        0,
       totalCalBurned:    0,
       lastWorkout:       null,
       scanResults:       null,
       notes:             '',
-      /* Progress logs */
-      progressLog: []
+      progressLog:       []
     };
 
     users.push(user);
     this.saveUsers(users);
     this.saveCurrentUser(user);
+    if (typeof VisitorTracker !== 'undefined') VisitorTracker.recordLogin(user);
     return { success: true, user };
   },
 
@@ -75,6 +74,7 @@ const Auth = {
     const user  = users.find(u => u.email === email.trim().toLowerCase() && u.password === password);
     if (!user) return { success: false, error: 'Invalid email or password.' };
     this.saveCurrentUser(user);
+    if (typeof VisitorTracker !== 'undefined') VisitorTracker.recordLogin(user);
     return { success: true, user };
   },
 
@@ -99,8 +99,8 @@ const Auth = {
   logWeight(weight) {
     const user = this.getCurrentUser();
     if (!user) return;
-    const history = [...(user.weightHistory || [])];
-    const today   = todayStr();
+    const history  = [...(user.weightHistory || [])];
+    const today    = todayStr();
     const existIdx = history.findIndex(h => h.date === today);
     if (existIdx >= 0) { history[existIdx].weight = +weight; }
     else               { history.push({ date: today, weight: +weight }); }
@@ -114,13 +114,13 @@ const Auth = {
     if (!user) return;
     const log = [...(user.progressLog || [])];
     log.unshift({ ...entry, date: todayStr(), id: Date.now() });
-    this.updateUser({ progressLog: log.slice(0, 50) }); // keep last 50
+    this.updateUser({ progressLog: log.slice(0, 50) });
   },
 
   recordWorkout(exercise) {
     const user = this.getCurrentUser();
     if (!user) return;
-    const cal = exercise ? (exercise.calories || 10) : 10;
+    const cal  = exercise ? ((exercise.calories || 10) * (exercise.sets || 1)) : 10;
     this.updateUser({
       workoutsCompleted: (user.workoutsCompleted || 0) + 1,
       totalCalBurned:    (user.totalCalBurned    || 0) + cal,
@@ -139,14 +139,13 @@ const Auth = {
   },
 
   bmiCategory(bmi) {
-    if (bmi < 18.5) return { label: 'Underweight', color: 'blue'   };
-    if (bmi < 25.0) return { label: 'Normal',      color: 'green'  };
-    if (bmi < 30.0) return { label: 'Overweight',  color: 'amber'  };
-    return                  { label: 'Obese',       color: 'red'    };
+    if (bmi < 18.5) return { label: 'Underweight', color: 'blue'  };
+    if (bmi < 25.0) return { label: 'Normal',      color: 'green' };
+    if (bmi < 30.0) return { label: 'Overweight',  color: 'amber' };
+    return                  { label: 'Obese',       color: 'red'   };
   },
 
   calcBMR(weight, height, age, gender) {
-    // Mifflin-St Jeor Equation
     if (gender === 'male') {
       return Math.round(10*weight + 6.25*height - 5*age + 5);
     }
@@ -159,35 +158,32 @@ const Auth = {
   },
 
   estimateBodyFat(bmi, age, gender) {
-    // Deurenberg formula
     const bf = (1.2 * bmi) + (0.23 * age) - (10.8 * (gender === 'male' ? 1 : 0)) - 5.4;
     return parseFloat(Math.max(4, Math.min(50, bf)).toFixed(1));
   },
 
   bodyFatCategory(bf, gender) {
     if (gender === 'male') {
-      if (bf < 6)  return { label: 'Essential', color: 'blue'   };
-      if (bf < 14) return { label: 'Athletic',  color: 'green'  };
-      if (bf < 18) return { label: 'Fitness',   color: 'green'  };
-      if (bf < 25) return { label: 'Average',   color: 'amber'  };
-      return               { label: 'Obese',    color: 'red'    };
+      if (bf < 6)  return { label: 'Essential', color: 'blue'  };
+      if (bf < 14) return { label: 'Athletic',  color: 'green' };
+      if (bf < 18) return { label: 'Fitness',   color: 'green' };
+      if (bf < 25) return { label: 'Average',   color: 'amber' };
+      return               { label: 'Obese',    color: 'red'   };
     } else {
-      if (bf < 14) return { label: 'Essential', color: 'blue'   };
-      if (bf < 21) return { label: 'Athletic',  color: 'green'  };
-      if (bf < 25) return { label: 'Fitness',   color: 'green'  };
-      if (bf < 32) return { label: 'Average',   color: 'amber'  };
-      return               { label: 'Obese',    color: 'red'    };
+      if (bf < 14) return { label: 'Essential', color: 'blue'  };
+      if (bf < 21) return { label: 'Athletic',  color: 'green' };
+      if (bf < 25) return { label: 'Fitness',   color: 'green' };
+      if (bf < 32) return { label: 'Average',   color: 'amber' };
+      return               { label: 'Obese',    color: 'red'   };
     }
   },
 
-  /* Recommended daily calories for goal */
   targetCalories(user) {
     const tdee = user.tdee || this.calcTDEE(user.bmr || 2000);
     const adj  = { 'fat-loss': -500, 'muscle-gain': +300, 'general': 0, 'calisthenics': +100, 'height': 0 };
     return tdee + (adj[user.goal] || 0);
   },
 
-  /* Display name for goal */
   goalLabel(goal) {
     const m = {
       'fat-loss':    '🔥 Fat Loss',
