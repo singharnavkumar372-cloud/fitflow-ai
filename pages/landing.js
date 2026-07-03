@@ -38,6 +38,9 @@ function renderLanding() {
           <button class="btn btn-secondary btn-lg" id="hero-learn-btn">
             <i class="fas fa-play"></i> How It Works
           </button>
+          <a class="btn btn-secondary btn-lg" href="https://github.com/singharnavkumar372-cloud/fitflow-ai/archive/refs/heads/main.zip" download>
+            <i class="fas fa-download"></i> Download App
+          </a>
         </div>
 
         <!-- Hero Stats -->
@@ -138,17 +141,48 @@ function renderLanding() {
         </div>
       </section>
 
+      <!-- Download Banner -->
+      <section style="padding:48px 64px;border-top:1px solid var(--border);background:rgba(0,212,255,0.03);">
+        <div style="max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;">
+          <div>
+            <h2 style="font-family:'Outfit',sans-serif;font-size:26px;font-weight:900;margin-bottom:8px;">Download FitFlow AI</h2>
+            <p style="font-size:15px;color:var(--text-muted);line-height:1.6;max-width:480px;">
+              Download the full source code and run FitFlow AI directly on your computer — no internet required. Just open <strong style="color:var(--text-primary)">index.html</strong> in any browser and you're ready to go.
+            </p>
+            <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+              <span style="background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.2);border-radius:var(--r-full);padding:4px 12px;font-size:12px;color:var(--accent-green);font-weight:600;">No Installation</span>
+              <span style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:var(--r-full);padding:4px 12px;font-size:12px;color:var(--accent-blue);font-weight:600;">Works Offline</span>
+              <span style="background:rgba(255,170,0,0.1);border:1px solid rgba(255,170,0,0.2);border-radius:var(--r-full);padding:4px 12px;font-size:12px;color:var(--accent-amber);font-weight:600;">100% Free</span>
+              <span style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2);border-radius:var(--r-full);padding:4px 12px;font-size:12px;color:var(--accent-purple);font-weight:600;">Open Source</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:center;">
+            <a class="btn btn-primary btn-lg" href="https://github.com/singharnavkumar372-cloud/fitflow-ai/archive/refs/heads/main.zip" style="min-width:220px;justify-content:center;">
+              <i class="fas fa-download"></i> Download ZIP
+            </a>
+            <a href="https://github.com/singharnavkumar372-cloud/fitflow-ai" target="_blank" rel="noopener" class="btn btn-secondary btn-sm" style="min-width:220px;justify-content:center;">
+              <i class="fab fa-github"></i> View on GitHub
+            </a>
+            <span style="font-size:11px;color:var(--text-muted);">v1.0 &nbsp;·&nbsp; MIT License &nbsp;·&nbsp; Free Forever</span>
+          </div>
+        </div>
+      </section>
+
       <!-- CTA Section -->
       <section class="landing-cta-section" id="how-it-works">
         <div style="max-width:600px;margin:0 auto;">
-          <div style="font-size:48px;margin-bottom:16px;">🚀</div>
           <h2 class="features-title">Ready to Start Your Journey?</h2>
           <p style="font-size:16px;color:var(--text-muted);margin-bottom:32px;line-height:1.7;">
             Join FitFlow AI today — it's completely free. Your personalized fitness coach is waiting.
           </p>
-          <button class="btn btn-primary btn-lg" id="cta-final-btn">
-            <i class="fas fa-bolt"></i> Create Free Account Now
-          </button>
+          <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-primary btn-lg" id="cta-final-btn">
+              <i class="fas fa-bolt"></i> Create Free Account Now
+            </button>
+            <a class="btn btn-secondary btn-lg" href="https://github.com/singharnavkumar372-cloud/fitflow-ai/archive/refs/heads/main.zip">
+              <i class="fas fa-download"></i> Download App
+            </a>
+          </div>
         </div>
       </section>
 
