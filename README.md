@@ -1,6 +1,6 @@
-# 🏋️ FitFlow AI — Personal Fitness Coach
+# ðŸ‹ï¸ FitFlow AI â€” Personal Fitness Coach
 
-> An AI-powered fitness web app for teens and young adults — complete with body scanning, guided workouts, diet planning, calisthenics training, and progress tracking.
+> An AI-powered fitness web app for teens and young adults â€” complete with body scanning, guided workouts, diet planning, calisthenics training, and progress tracking.
 
 ![FitFlow AI](https://img.shields.io/badge/FitFlow-AI%20Powered-00d4ff?style=for-the-badge&logo=lightning&logoColor=white)
 ![HTML](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
@@ -9,22 +9,22 @@
 
 ---
 
-## ✨ Features
+## âœ¨ Features
 
 | Feature | Description |
 |---|---|
-| 🤖 **AI Body Scanner** | Enter your stats for instant body fat, BMI, TDEE analysis + personalized plan |
-| 💪 **35+ Exercises** | Step-by-step guides with in-app YouTube video tutorials for every muscle group |
-| 🥗 **Diet Planner** | 7-day personalized meal plans with full macro breakdowns for 5 different goals |
-| 🏆 **Calisthenics Program** | Structured 8-week program: beginner → muscle-up & handstand |
-| 📏 **Height Increase Program** | 12-week daily routine for spinal decompression & posture correction |
-| 📊 **Progress Tracker** | Weight logging, Chart.js charts, AI weekly reports |
-| 🏠 **Home & Gym Workouts** | Every exercise has a home alternative — no gym required |
-| 🔐 **User Accounts** | Secure sign-up/sign-in with persistent data via localStorage |
+| ðŸ¤– **AI Body Scanner** | Enter your stats for instant body fat, BMI, TDEE analysis + personalized plan |
+| ðŸ’ª **35+ Exercises** | Step-by-step guides with in-app YouTube video tutorials for every muscle group |
+| ðŸ¥— **Diet Planner** | 7-day personalized meal plans with full macro breakdowns for 5 different goals |
+| ðŸ† **Calisthenics Program** | Structured 8-week program: beginner â†’ muscle-up & handstand |
+| ðŸ“ **Height Increase Program** | 12-week daily routine for spinal decompression & posture correction |
+| ðŸ“Š **Progress Tracker** | Weight logging, Chart.js charts, AI weekly reports |
+| ðŸ  **Home & Gym Workouts** | Every exercise has a home alternative â€” no gym required |
+| ðŸ” **User Accounts** | Secure sign-up/sign-in with persistent data via localStorage |
 
 ---
 
-## 🎯 Target Audience
+## ðŸŽ¯ Target Audience
 
 - Teenagers, young adults, and adults looking to get fit
 - People who want to train at **home without equipment**
@@ -33,77 +33,77 @@
 
 ---
 
-## 🚀 Live Demo
+## ðŸš€ Live Demo
 
-> 🌐 [View Live on GitHub Pages](https://YOUR-USERNAME.github.io/fitflow-ai)
+> ðŸŒ [View Live on GitHub Pages](https://singharnavkumar372-cloud.github.io/fitflow-ai)
 
 ---
 
-## 💻 Run Locally
+## ðŸ’» Run Locally
 
-No build step needed — pure HTML, CSS, and JavaScript!
+No build step needed â€” pure HTML, CSS, and JavaScript!
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/YOUR-USERNAME/fitflow-ai.git
+   git clone https://github.com/singharnavkumar372-cloud/fitflow-ai.git
    ```
-2. Open `index.html` in your browser — that's it!
+2. Open `index.html` in your browser â€” that's it!
 
 Or simply **double-click** `index.html` to open it directly.
 
 ---
 
-## 📁 Project Structure
+## ðŸ“ Project Structure
 
 ```
 fitflow-ai/
-├── index.html          # App shell, sidebar navigation, auth modal
-├── style.css           # Complete premium dark design system
-├── auth.js             # Authentication, BMI/BMR/TDEE calculations
-├── app.js              # SPA router & navigation controller
-├── data/
-│   ├── exercises.js    # 35+ exercises database across 10 categories
-│   ├── diet.js         # 5 weekly meal plan databases
-│   └── programs.js     # Calisthenics & Height Increase programs
-└── pages/
-    ├── landing.js      # Hero landing page
-    ├── dashboard.js    # Dashboard with stats & today's workout
-    ├── scanner.js      # AI Body Scanner with animated analysis
-    ├── workouts.js     # Filterable exercise library with video modal
-    ├── diet.js         # Weekly meal planner with macro charts
-    ├── programs.js     # Calisthenics & Height programs
-    ├── progress.js     # Weight & workout progress charts
-    └── profile.js      # Profile management & body metrics
+â”œâ”€â”€ index.html          # App shell, sidebar navigation, auth modal
+â”œâ”€â”€ style.css           # Complete premium dark design system
+â”œâ”€â”€ auth.js             # Authentication, BMI/BMR/TDEE calculations
+â”œâ”€â”€ app.js              # SPA router & navigation controller
+â”œâ”€â”€ data/
+â”‚   â”œâ”€â”€ exercises.js    # 35+ exercises database across 10 categories
+â”‚   â”œâ”€â”€ diet.js         # 5 weekly meal plan databases
+â”‚   â””â”€â”€ programs.js     # Calisthenics & Height Increase programs
+â””â”€â”€ pages/
+    â”œâ”€â”€ landing.js      # Hero landing page
+    â”œâ”€â”€ dashboard.js    # Dashboard with stats & today's workout
+    â”œâ”€â”€ scanner.js      # AI Body Scanner with animated analysis
+    â”œâ”€â”€ workouts.js     # Filterable exercise library with video modal
+    â”œâ”€â”€ diet.js         # Weekly meal planner with macro charts
+    â”œâ”€â”€ programs.js     # Calisthenics & Height programs
+    â”œâ”€â”€ progress.js     # Weight & workout progress charts
+    â””â”€â”€ profile.js      # Profile management & body metrics
 ```
 
 ---
 
-## 🏗️ Tech Stack
+## ðŸ—ï¸ Tech Stack
 
-- **HTML5** — Semantic SPA shell
-- **Vanilla CSS** — Custom premium dark design system with glassmorphism
-- **Vanilla JavaScript** — SPA routing, auth, state management
-- **Chart.js** — Progress & macro charts
-- **Font Awesome** — Icons
-- **Google Fonts** — Inter & Outfit typography
-- **localStorage** — Client-side data persistence
-
----
-
-## 📸 Screenshots
-
-> Coming soon — add your own screenshots here!
+- **HTML5** â€” Semantic SPA shell
+- **Vanilla CSS** â€” Custom premium dark design system with glassmorphism
+- **Vanilla JavaScript** â€” SPA routing, auth, state management
+- **Chart.js** â€” Progress & macro charts
+- **Font Awesome** â€” Icons
+- **Google Fonts** â€” Inter & Outfit typography
+- **localStorage** â€” Client-side data persistence
 
 ---
 
-## 🙏 Acknowledgements
+## ðŸ“¸ Screenshots
+
+> Coming soon â€” add your own screenshots here!
+
+---
+
+## ðŸ™ Acknowledgements
 
 - Exercise data based on published fitness research
 - Diet plans inspired by sports nutrition guidelines
-- Built with ❤️ using FitFlow AI
+- Built with â¤ï¸ using FitFlow AI
 
 ---
 
-## 📄 License
+## ðŸ“„ License
 
-MIT License — free to use, modify, and distribute.
+MIT License â€” free to use, modify, and distribute.
