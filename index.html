@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="FitFlow AI — Your personal AI-powered fitness coach for body transformation, diet planning, calisthenics, and more.">
+  <meta name="keywords" content="fitness, workout, AI, body scanner, diet planner, calisthenics, weight loss">
+  <title>FitFlow AI — Personal Fitness Coach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Toast Notifications -->
+  <div id="toast-container"></div>
+
+  <!-- ============================================
+       LANDING VIEW (shown when logged out)
+  ============================================ -->
+  <div id="landing-view">
+    <div id="landing-content"></div>
+
+    <!-- Auth Modal Overlay -->
+    <div id="auth-overlay" class="hidden">
+      <div class="auth-modal">
+        <button class="auth-close" id="auth-close-btn" title="Close"><i class="fas fa-times"></i></button>
+
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+          <div class="auth-logo"><i class="fas fa-bolt"></i></div>
+          <h2>Welcome Back</h2>
+          <p class="auth-subtitle">Sign in to continue your fitness journey</p>
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <input type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary btn-full" id="login-submit-btn">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+          <div class="auth-demo-hint">
+            <i class="fas fa-info-circle"></i> New here? Create a free account below!
+          </div>
+          <p class="auth-switch">Don't have an account? <a href="#" id="switch-to-signup">Sign Up Free</a></p>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form" class="auth-form hidden">
+          <div class="auth-logo"><i class="fas fa-dumbbell"></i></div>
+          <h2>Join FitFlow AI</h2>
+          <p class="auth-subtitle">Start your transformation journey today</p>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signup-name">Full Name</label>
+              <input type="text" id="signup-name" placeholder="Your name" autocomplete="name">
+            </div>
+            <div class="form-group">
+              <label for="signup-age">Age</label>
+              <input type="number" id="signup-age" placeholder="Age" min="13" max="80">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signup-email">Email Address</label>
+            <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signup-password">Password</label>
+              <input type="password" id="signup-password" placeholder="Min 6 characters" autocomplete="new-password">
+            </div>
+            <div class="form-group">
+              <label for="signup-gender">Gender</label>
+              <select id="signup-gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="signup-weight">Weight (kg)</label>
+              <input type="number" id="signup-weight" placeholder="e.g. 70" min="30" max="250">
+            </div>
+            <div class="form-group">
+              <label for="signup-height">Height (cm)</label>
+              <input type="number" id="signup-height" placeholder="e.g. 175" min="100" max="250">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signup-goal">Primary Goal</label>
+            <select id="signup-goal">
+              <option value="fat-loss">🔥 Lose Fat / Reduce Weight</option>
+              <option value="muscle-gain">💪 Build Muscle</option>
+              <option value="calisthenics">🏆 Learn Calisthenics</option>
+              <option value="height">📏 Increase Height</option>
+              <option value="general">⚖️ General Fitness</option>
+            </select>
+          </div>
+          <button class="btn btn-primary btn-full" id="signup-submit-btn">
+            <i class="fas fa-rocket"></i> Create My Account
+          </button>
+          <p class="auth-switch">Already have an account? <a href="#" id="switch-to-login">Sign In</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       APP SHELL (shown when logged in)
+  ============================================ -->
+  <div id="app-shell" class="hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon"><i class="fas fa-bolt"></i></div>
+        <span>FitFlow <span class="ai-badge">AI</span></span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a href="#dashboard" class="nav-item" data-page="dashboard" id="nav-dashboard">
+          <i class="fas fa-th-large"></i><span>Dashboard</span>
+        </a>
+        <a href="#scanner" class="nav-item" data-page="scanner" id="nav-scanner">
+          <i class="fas fa-qrcode"></i><span>AI Body Scanner</span>
+        </a>
+        <a href="#workouts" class="nav-item" data-page="workouts" id="nav-workouts">
+          <i class="fas fa-dumbbell"></i><span>Workouts</span>
+        </a>
+        <a href="#diet" class="nav-item" data-page="diet" id="nav-diet">
+          <i class="fas fa-utensils"></i><span>Diet Planner</span>
+        </a>
+
+        <div class="nav-section-label">Programs</div>
+        <a href="#calisthenics" class="nav-item" data-page="calisthenics" id="nav-calisthenics">
+          <i class="fas fa-person-walking"></i><span>Calisthenics</span>
+        </a>
+        <a href="#height" class="nav-item" data-page="height" id="nav-height">
+          <i class="fas fa-arrows-up-down"></i><span>Height Increase</span>
+        </a>
+
+        <div class="nav-section-label">My Stats</div>
+        <a href="#progress" class="nav-item" data-page="progress" id="nav-progress">
+          <i class="fas fa-chart-line"></i><span>Progress</span>
+        </a>
+        <a href="#profile" class="nav-item" data-page="profile" id="nav-profile">
+          <i class="fas fa-user-circle"></i><span>Profile</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="sidebar-avatar">A</div>
+          <div class="user-details">
+            <div class="user-name" id="sidebar-username">Loading...</div>
+            <div class="user-goal" id="sidebar-goal">General Fitness</div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+      <div id="page-content">
+        <div class="loading-spinner"><div class="spinner"></div></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Exercise Detail Modal (injected by workouts.js) -->
+  <div id="exercise-modal-container"></div>
+
+  <!-- ============================================
+       Scripts — ORDER MATTERS!
+  ============================================ -->
+  <script src="data/exercises.js"></script>
+  <script src="data/diet.js"></script>
+  <script src="data/programs.js"></script>
+  <script src="auth.js"></script>
+  <script src="pages/landing.js"></script>
+  <script src="pages/dashboard.js"></script>
+  <script src="pages/scanner.js"></script>
+  <script src="pages/workouts.js"></script>
+  <script src="pages/diet.js"></script>
+  <script src="pages/programs.js"></script>
+  <script src="pages/progress.js"></script>
+  <script src="pages/profile.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
