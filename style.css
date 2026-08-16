@@ -1244,3 +1244,103 @@ body::before {
   .quick-action-label { font-size: 11px; }
   .exercises-grid { gap: 8px; }
 }
+
+/* ============================================================
+   Bottom Mobile Navigation Bar
+   ============================================================ */
+.bottom-nav {
+  display: none; /* shown on mobile only */
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+  background: rgba(10,10,22,0.97);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 4px env(safe-area-inset-bottom, 6px);
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+}
+
+.bottom-nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 6px 10px; border-radius: 12px; cursor: pointer;
+  color: rgba(255,255,255,0.4); font-size: 10px; font-weight: 600;
+  transition: all 0.2s; min-width: 48px; text-align: center;
+  border: 1px solid transparent;
+}
+.bottom-nav-item i { font-size: 18px; display: block; }
+.bottom-nav-item:hover { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.05); }
+.bottom-nav-item.active {
+  color: #00d4ff;
+  background: rgba(0,212,255,0.1);
+  border-color: rgba(0,212,255,0.2);
+}
+.bottom-nav-item.active i { filter: drop-shadow(0 0 6px rgba(0,212,255,0.6)); }
+
+/* When on mobile, add bottom padding to main content for nav bar */
+@media (max-width: 768px) {
+  .bottom-nav:not(.hidden) { display: flex !important; }
+  #main-content { padding-bottom: 72px; }
+  #app-shell:not(.hidden) ~ .bottom-nav { display: flex; }
+}
+
+/* ============================================================
+   Quick Action Grid (mobile-friendly)
+   ============================================================ */
+.quick-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.quick-action {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--r-md); padding: 16px 12px;
+  text-align: center; cursor: pointer; transition: var(--t);
+  text-decoration: none; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; color: var(--text-primary);
+}
+.quick-action:hover {
+  border-color: rgba(0,212,255,0.3);
+  background: rgba(0,212,255,0.05);
+  transform: translateY(-3px);
+}
+.quick-action-icon { font-size: 28px; }
+.quick-action-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+/* ============================================================
+   Copyright Footer Update
+   ============================================================ */
+.app-footer {
+  margin-top: 48px;
+  padding: 22px 36px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(7,7,15,0.8);
+}
+.footer-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  font-size: 13px; color: rgba(255,255,255,0.4);
+}
+.footer-brand {
+  display: flex; align-items: center; gap: 8px;
+  font-family: 'Outfit', sans-serif; font-weight: 900;
+  font-size: 16px; color: #fff;
+}
+.footer-brand i { color: #00d4ff; }
+.footer-credit strong { color: #00d4ff; }
+.footer-copy { margin-left: auto; font-size: 12px; }
+
+@media (max-width: 768px) {
+  .quick-actions-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .quick-action { padding: 12px 8px; }
+  .quick-action-icon { font-size: 22px; }
+  .quick-action-label { font-size: 11px; }
+  .app-footer { padding: 16px 16px 80px; }
+  .footer-inner { flex-direction: column; text-align: center; gap: 6px; }
+  .footer-copy { margin-left: 0; }
+}
+@media (max-width: 480px) {
+  .quick-actions-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .quick-action { padding: 10px 6px; }
+}
