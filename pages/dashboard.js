@@ -340,3 +340,314 @@ function renderDashMiniChart(history) {
     }
   });
 }
+
+/* ── ACHIEVEMENTS WIDGET ── */
+function renderAchievements() {
+  const user  = Auth.getCurrentUser();
+  const all   = typeof ACHIEVEMENTS !== 'undefined' ? Auth.getAchievements() : [];
+  const unlocked = all.filter(a => a.unlocked);
+  const total    = all.length;
+
+  const grid = all.map(a => `
+    <div style="
+      padding:12px;border-radius:12px;text-align:center;
+      background:${a.unlocked ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.02)'};
+      border:1px solid ${a.unlocked ? 'rgba(0,212,255,0.25)' : 'rgba(255,255,255,0.06)'};
+      opacity:${a.unlocked ? '1' : '0.4'};transition:all .2s;
+    ">
+      <div style="font-size:24px;margin-bottom:6px;">${a.emoji}</div>
+      <div style="font-size:12px;font-weight:700;margin-bottom:2px;">${a.title}</div>
+      <div style="font-size:10px;color:var(--text-muted);">${a.desc}</div>
+      ${a.unlocked ? `<div style="font-size:9px;color:var(--accent-green);margin-top:4px;">✓ Unlocked</div>` : ''}
+    </div>
+  `).join('');
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="page-header">
+      <h1 class="page-title">🏆 My Achievements</h1>
+      <p class="page-subtitle">${unlocked.length} / ${total} achievements unlocked</p>
+    </div>
+
+    <div style="margin-bottom:22px;background:linear-gradient(135deg,rgba(255,170,0,0.08),rgba(168,85,247,0.08));border:1px solid rgba(255,170,0,0.2);border-radius:var(--r-lg);padding:18px 22px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="font-size:36px;">🏆</div>
+      <div>
+        <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;">${unlocked.length} / ${total} Unlocked</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-top:3px;">Keep working out to unlock all achievements!</div>
+      </div>
+      <div style="margin-left:auto;">
+        <div style="background:rgba(255,255,255,0.06);border-radius:999px;height:8px;width:160px;overflow:hidden;">
+          <div style="height:100%;width:${Math.round(unlocked.length/total*100)}%;background:linear-gradient(90deg,#ffaa00,#a855f7);border-radius:999px;"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);text-align:right;margin-top:4px;">${Math.round(unlocked.length/total*100)}% complete</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;">
+      ${grid}
+    </div>
+  `;
+}
+
+/* ── CALORIE DIARY WIDGET ── */
+function renderCalorieDiary() {
+  const user   = Auth.getCurrentUser();
+  if (!user) return;
+  const target = Auth.targetCalories(user);
+  const { total, entries } = Auth.getTodayCalories();
+  const pct    = Math.min(100, Math.round(total / target * 100));
+  const color  = pct > 110 ? '#ff4757' : pct > 90 ? '#ffaa00' : '#00ff88';
+
+  const mealTypes = ['Breakfast','Lunch','Dinner','Snack'];
+  const mealOptions = mealTypes.map(m => `<option value="${m}">${m}</option>`).join('');
+
+  const entriesList = entries.length ? entries.map(e => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-size:13px;font-weight:600;">${e.name}</div>
+        <div style="font-size:11px;color:var(--text-muted);">${e.mealType} · ${e.time}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-size:14px;font-weight:700;color:var(--accent-amber);">${e.calories} cal</div>
+        ${e.protein ? `<div style="font-size:10px;color:var(--text-muted);">P:${e.protein}g C:${e.carbs||0}g F:${e.fat||0}g</div>` : ''}
+      </div>
+    </div>
+  `).join('') : `<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;">No meals logged today. Add your first meal below!</div>`;
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="page-header flex-between" style="flex-wrap:wrap;gap:10px;">
+      <div>
+        <h1 class="page-title">🍽️ Calorie Diary</h1>
+        <p class="page-subtitle">${new Date().toLocaleDateString('en-IN',{weekday:'long',month:'long',day:'numeric'})}</p>
+      </div>
+    </div>
+
+    <div class="grid-2" style="gap:18px;margin-bottom:22px;">
+      <!-- Today Summary -->
+      <div class="card card-accent" style="text-align:center;padding:24px;">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:10px;">Today's Intake</div>
+        <div style="font-family:'Outfit',sans-serif;font-size:52px;font-weight:900;color:${color};line-height:1;">${total}</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:4px;">of ${target} kcal target</div>
+        <div style="margin-top:14px;background:rgba(255,255,255,0.06);border-radius:999px;height:8px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${color};border-radius:999px;transition:width .5s;"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${pct}% of daily goal</div>
+        <div style="margin-top:12px;font-size:13px;font-weight:600;color:${pct>110?'#ff4757':pct>90?'#ffaa00':'#00ff88'}">
+          ${pct>110 ? '⚠️ Over target — consider lighter options' : pct>90 ? '👍 On track!' : `${target-total} kcal remaining`}
+        </div>
+      </div>
+
+      <!-- Macros -->
+      <div class="card" style="padding:20px;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:14px;">🔬 Today's Macros</div>
+        ${['protein','carbs','fat'].map(m => {
+          const total_m = entries.reduce((s,e)=>s+(e[m]||0),0);
+          const goal_m = m==='protein'?Math.round(user.weight*1.8):m==='carbs'?Math.round(target*0.4/4):Math.round(target*0.25/9);
+          const p = Math.min(100,Math.round(total_m/goal_m*100));
+          const c = m==='protein'?'#00d4ff':m==='carbs'?'#ffaa00':'#a855f7';
+          return `<div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">
+              <span style="font-weight:600;text-transform:capitalize;">${m}</span>
+              <span style="color:var(--text-muted);">${total_m}g / ~${goal_m}g</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.06);border-radius:999px;height:6px;">
+              <div style="height:100%;width:${p}%;background:${c};border-radius:999px;"></div>
+            </div>
+          </div>`;
+        }).join('')}
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Based on ${entries.length} logged meals</div>
+      </div>
+    </div>
+
+    <!-- Log Meal Form -->
+    <div class="card" style="margin-bottom:20px;padding:20px 22px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px;">➕ Log a Meal</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="form-group" style="margin:0">
+          <input type="text" id="cal-food-name" class="form-group input" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;" placeholder="Food name (e.g. Rice, Chicken)">
+        </div>
+        <div class="form-group" style="margin:0">
+          <input type="number" id="cal-calories" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;" placeholder="Calories" min="0">
+        </div>
+        <div class="form-group" style="margin:0">
+          <input type="number" id="cal-protein" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;" placeholder="Protein g">
+        </div>
+        <div class="form-group" style="margin:0">
+          <select id="cal-meal-type" style="width:100%;background:rgba(20,20,35,0.95);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;">${mealOptions}</select>
+        </div>
+      </div>
+      <button id="cal-log-btn" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Add to Diary
+      </button>
+    </div>
+
+    <!-- Entries -->
+    <div class="card" style="padding:20px 22px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px;">📋 Today's Log (${entries.length} items)</div>
+      ${entriesList}
+    </div>
+  `;
+
+  document.getElementById('cal-log-btn')?.addEventListener('click', () => {
+    const name = document.getElementById('cal-food-name')?.value.trim();
+    const cal  = parseInt(document.getElementById('cal-calories')?.value || '0');
+    const prot = parseInt(document.getElementById('cal-protein')?.value || '0');
+    const type = document.getElementById('cal-meal-type')?.value;
+    if (!name || !cal) { App.toast('Enter food name and calories!','error'); return; }
+    Auth.logCalories({ name, calories:cal, protein:prot, carbs:0, fat:0, mealType:type });
+    App.toast(`Logged: ${name} (${cal} kcal)`, 'success');
+    renderCalorieDiary();
+  });
+}
+
+/* ── WORKOUT HISTORY ── */
+function renderWorkoutHistory() {
+  const user = Auth.getCurrentUser();
+  if (!user) return;
+  const history = (user.workoutHistory || []).slice(0, 50);
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="page-header flex-between" style="flex-wrap:wrap;gap:10px;">
+      <div>
+        <h1 class="page-title">📋 Workout History</h1>
+        <p class="page-subtitle">${history.length} workouts logged</p>
+      </div>
+    </div>
+
+    ${history.length === 0 ? `
+      <div class="card" style="text-align:center;padding:40px;">
+        <div style="font-size:42px;margin-bottom:12px;">🏋️</div>
+        <h3 style="font-size:17px;font-weight:700;margin-bottom:6px;">No workouts yet</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Complete a workout in the Workouts page to see your history here.</p>
+        <a href="#workouts" data-page="workouts" class="btn btn-primary"><i class="fas fa-dumbbell"></i> Go to Workouts</a>
+      </div>
+    ` : `
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${history.map((w,i) => `
+          <div class="card" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 18px;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div style="width:38px;height:38px;border-radius:10px;background:rgba(0,212,255,0.12);display:flex;align-items:center;justify-content:center;font-size:18px;">💪</div>
+              <div>
+                <div style="font-size:14px;font-weight:700;">${w.exercise}</div>
+                <div style="font-size:11px;color:var(--text-muted);">${w.date} at ${w.time} · ${w.category}</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;">
+              <div style="text-align:center;">
+                <div style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--accent-amber);">${w.sets}</div>
+                <div style="font-size:10px;color:var(--text-muted);">Sets</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--accent-blue);">${w.reps||'—'}</div>
+                <div style="font-size:10px;color:var(--text-muted);">Reps</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--accent-green);">${w.cal}</div>
+                <div style="font-size:10px;color:var(--text-muted);">Cal</div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `}
+  `;
+}
+
+/* ── BODY MEASUREMENTS ── */
+function renderMeasurements() {
+  const user = Auth.getCurrentUser();
+  if (!user) return;
+  const measurements = (user.measurements || []);
+  const latest = measurements[0] || {};
+  const prev   = measurements[1] || {};
+
+  function diffBadge(curr, prev, key) {
+    if (!curr[key] || !prev[key]) return '';
+    const d = (curr[key] - prev[key]).toFixed(1);
+    return d > 0 ? `<span style="color:#ff4757;font-size:10px;">+${d}</span>` : `<span style="color:#00ff88;font-size:10px;">${d}</span>`;
+  }
+
+  const fields = [
+    { key:'chest', label:'Chest', icon:'💪' },
+    { key:'waist', label:'Waist', icon:'👔' },
+    { key:'hips',  label:'Hips',  icon:'🍑' },
+    { key:'arms',  label:'Arms',  icon:'🦾' },
+    { key:'thighs',label:'Thighs',icon:'🦵' },
+    { key:'neck',  label:'Neck',  icon:'🦒' }
+  ];
+
+  document.getElementById('page-content').innerHTML = `
+    <div class="page-header">
+      <h1 class="page-title">📏 Body Measurements</h1>
+      <p class="page-subtitle">Track your body shape changes over time</p>
+    </div>
+
+    <!-- Log Form -->
+    <div class="card" style="margin-bottom:22px;padding:20px 22px;">
+      <div style="font-size:15px;font-weight:700;margin-bottom:14px;">📝 Log Today's Measurements (cm)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;">
+        ${fields.map(f => `
+          <div>
+            <label style="font-size:11px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:5px;text-transform:uppercase;">${f.icon} ${f.label}</label>
+            <input type="number" id="meas-${f.key}" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:#fff;font-size:13px;outline:none;" placeholder="e.g. 85" step="0.1" value="${latest[f.key]||''}">
+          </div>
+        `).join('')}
+      </div>
+      <button id="meas-save-btn" class="btn btn-success"><i class="fas fa-save"></i> Save Measurements</button>
+    </div>
+
+    <!-- Latest Stats -->
+    ${measurements.length > 0 ? `
+    <div class="section">
+      <div class="section-header"><h2 class="section-title-sm">📊 Latest Measurements</h2></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px;">
+        ${fields.map(f => `
+          <div class="card" style="text-align:center;padding:16px;">
+            <div style="font-size:22px;margin-bottom:6px;">${f.icon}</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:24px;font-weight:900;color:var(--accent-blue);">${latest[f.key]||'—'}<span style="font-size:12px;color:var(--text-muted)"> cm</span></div>
+            <div style="font-size:12px;color:var(--text-muted);">${f.label}</div>
+            ${diffBadge(latest, prev, f.key)}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    ` : `
+    <div class="card" style="text-align:center;padding:30px;">
+      <div style="font-size:32px;margin-bottom:10px;">📏</div>
+      <p style="color:var(--text-muted);font-size:13px;">Log your first measurements above to start tracking!</p>
+    </div>
+    `}
+
+    <!-- History Table -->
+    ${measurements.length > 1 ? `
+    <div class="card" style="overflow-x:auto;">
+      <div style="font-size:15px;font-weight:700;padding:16px 18px;border-bottom:1px solid var(--border);">📅 History (${measurements.length} logs)</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead><tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:10px 14px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-muted);">Date</th>
+          ${fields.map(f=>`<th style="text-align:center;padding:10px 10px;font-size:10px;font-weight:700;text-transform:uppercase;color:var(--text-muted);">${f.label}</th>`).join('')}
+        </tr></thead>
+        <tbody>
+          ${measurements.slice(0,10).map(m=>`
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.04);">
+              <td style="padding:10px 14px;font-size:12px;color:var(--text-muted);">${m.date}</td>
+              ${fields.map(f=>`<td style="text-align:center;padding:10px;font-size:13px;font-weight:600;">${m[f.key]||'—'}</td>`).join('')}
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+    ` : ''}
+  `;
+
+  document.getElementById('meas-save-btn')?.addEventListener('click', () => {
+    const data = {};
+    fields.forEach(f => {
+      const val = parseFloat(document.getElementById(`meas-${f.key}`)?.value);
+      if (!isNaN(val) && val > 0) data[f.key] = val;
+    });
+    if (!Object.keys(data).length) { App.toast('Enter at least one measurement!','error'); return; }
+    Auth.logMeasurements(data);
+    App.toast('Measurements saved! 📏', 'success');
+    renderMeasurements();
+  });
+}
