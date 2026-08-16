@@ -1,6 +1,6 @@
 /* ============================================================
-   FitFlow AI — Authentication Module
-   Handles user registration, login, session & metrics
+   FitFlow AI — Authentication Module v2
+   Handles user registration, login, session, metrics & achievements
    ============================================================ */
 
 const Auth = {
@@ -58,13 +58,27 @@ const Auth = {
       lastWorkout:       null,
       scanResults:       null,
       notes:             '',
-      progressLog:       []
+      progressLog:       [],
+      /* NEW: Achievements */
+      achievements:      [],
+      /* NEW: Calorie diary */
+      calorieDiary:      [],
+      /* NEW: Body measurements */
+      measurements:      [],
+      /* NEW: Workout history */
+      workoutHistory:    [],
+      /* NEW: Steps */
+      steps:             [],
+      /* NEW: Water log */
+      waterLog:          {}
     };
 
     users.push(user);
     this.saveUsers(users);
     this.saveCurrentUser(user);
     if (typeof VisitorTracker !== 'undefined') VisitorTracker.recordLogin(user);
+    // Unlock "Welcome" achievement
+    this.unlockAchievement('welcome');
     return { success: true, user };
   },
 
@@ -121,15 +135,107 @@ const Auth = {
     const user = this.getCurrentUser();
     if (!user) return;
     const cal  = exercise ? ((exercise.calories || 10) * (exercise.sets || 1)) : 10;
-    this.updateUser({
-      workoutsCompleted: (user.workoutsCompleted || 0) + 1,
-      totalCalBurned:    (user.totalCalBurned    || 0) + cal,
-      lastWorkout:       new Date().toISOString()
+    const newCount = (user.workoutsCompleted || 0) + 1;
+
+    // Add to history
+    const workoutHistory = [...(user.workoutHistory || [])];
+    workoutHistory.unshift({
+      id: Date.now(),
+      exercise: exercise?.name || 'Workout',
+      category: exercise?.category || 'General',
+      sets: exercise?.sets || 1,
+      reps: exercise?.reps || 0,
+      cal,
+      date: todayStr(),
+      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
     });
+
+    this.updateUser({
+      workoutsCompleted: newCount,
+      totalCalBurned:    (user.totalCalBurned || 0) + cal,
+      lastWorkout:       new Date().toISOString(),
+      workoutHistory:    workoutHistory.slice(0, 100)
+    });
+
+    // Check achievements
+    if (newCount === 1)   this.unlockAchievement('first_workout');
+    if (newCount === 5)   this.unlockAchievement('five_workouts');
+    if (newCount === 10)  this.unlockAchievement('ten_workouts');
+    if (newCount === 25)  this.unlockAchievement('twentyfive_workouts');
+    if (newCount === 50)  this.unlockAchievement('fifty_workouts');
+    if ((user.totalCalBurned||0)+cal >= 1000) this.unlockAchievement('cal_1000');
+    if ((user.totalCalBurned||0)+cal >= 5000) this.unlockAchievement('cal_5000');
+  },
+
+  /* ---------- NEW: Calorie Diary ---------- */
+  logCalories(entry) {
+    // entry: { name, calories, protein, carbs, fat, mealType }
+    const user = this.getCurrentUser();
+    if (!user) return;
+    const diary = [...(user.calorieDiary || [])];
+    diary.unshift({
+      ...entry,
+      id:   Date.now(),
+      date: todayStr(),
+      time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })
+    });
+    this.updateUser({ calorieDiary: diary.slice(0, 200) });
+  },
+
+  getTodayCalories() {
+    const user = this.getCurrentUser();
+    if (!user) return { total: 0, entries: [] };
+    const today   = todayStr();
+    const entries = (user.calorieDiary || []).filter(e => e.date === today);
+    const total   = entries.reduce((s, e) => s + (e.calories || 0), 0);
+    return { total, entries };
+  },
+
+  /* ---------- NEW: Body Measurements ---------- */
+  logMeasurements(data) {
+    // data: { chest, waist, hips, arms, thighs, neck }
+    const user = this.getCurrentUser();
+    if (!user) return;
+    const measurements = [...(user.measurements || [])];
+    const today = todayStr();
+    const existIdx = measurements.findIndex(m => m.date === today);
+    if (existIdx >= 0) measurements[existIdx] = { ...data, date: today };
+    else measurements.unshift({ ...data, date: today, id: Date.now() });
+    this.updateUser({ measurements: measurements.slice(0, 100) });
+    this.unlockAchievement('first_measurement');
+  },
+
+  /* ---------- NEW: Achievements ---------- */
+  unlockAchievement(id) {
+    const user = this.getCurrentUser();
+    if (!user) return false;
+    const all = [...(user.achievements || [])];
+    if (all.find(a => a.id === id)) return false; // already unlocked
+    const def = ACHIEVEMENTS[id];
+    if (!def) return false;
+    all.push({ id, unlockedAt: new Date().toISOString() });
+    this.updateUser({ achievements: all });
+    // Show toast if App is available
+    if (typeof App !== 'undefined') {
+      App.toast(`🏆 Achievement Unlocked: ${def.title}`, 'success');
+    }
+    return true;
+  },
+
+  getAchievements() {
+    const user = this.getCurrentUser();
+    if (!user) return [];
+    const unlocked = user.achievements || [];
+    return Object.entries(ACHIEVEMENTS).map(([id, def]) => ({
+      id, ...def,
+      unlocked: !!unlocked.find(a => a.id === id),
+      unlockedAt: unlocked.find(a => a.id === id)?.unlockedAt || null
+    }));
   },
 
   saveScanResults(results) {
     this.updateUser({ scanResults: results });
+    this.unlockAchievement('first_scan');
   },
 
   /* ---------- Calculations ---------- */
@@ -146,9 +252,7 @@ const Auth = {
   },
 
   calcBMR(weight, height, age, gender) {
-    if (gender === 'male') {
-      return Math.round(10*weight + 6.25*height - 5*age + 5);
-    }
+    if (gender === 'male') return Math.round(10*weight + 6.25*height - 5*age + 5);
     return Math.round(10*weight + 6.25*height - 5*age - 161);
   },
 
@@ -158,7 +262,7 @@ const Auth = {
   },
 
   estimateBodyFat(bmi, age, gender) {
-    const bf = (1.2 * bmi) + (0.23 * age) - (10.8 * (gender === 'male' ? 1 : 0)) - 5.4;
+    const bf = (1.2*bmi) + (0.23*age) - (10.8*(gender==='male'?1:0)) - 5.4;
     return parseFloat(Math.max(4, Math.min(50, bf)).toFixed(1));
   },
 
@@ -194,6 +298,22 @@ const Auth = {
     };
     return m[goal] || '⚖️ General Fitness';
   }
+};
+
+/* ---- Achievement Definitions ---- */
+const ACHIEVEMENTS = {
+  welcome:             { title: 'Welcome to FitFlow!',   emoji: '🎉', desc: 'Created your account',       color: 'blue'   },
+  first_workout:       { title: 'First Sweat!',           emoji: '💪', desc: 'Completed your first workout', color: 'green'  },
+  five_workouts:       { title: 'Getting Serious',        emoji: '🔥', desc: '5 workouts done',             color: 'amber'  },
+  ten_workouts:        { title: 'Dedicated Athlete',      emoji: '⚡', desc: '10 workouts completed',       color: 'blue'   },
+  twentyfive_workouts: { title: 'Fitness Machine',        emoji: '🏋️', desc: '25 workouts done!',           color: 'purple' },
+  fifty_workouts:      { title: 'Legend Status',          emoji: '🏆', desc: '50 workouts — incredible!',   color: 'amber'  },
+  cal_1000:            { title: 'Calorie Crusher',        emoji: '🔥', desc: 'Burned 1,000+ calories',      color: 'red'    },
+  cal_5000:            { title: 'Inferno Mode',           emoji: '🌋', desc: 'Burned 5,000+ calories',      color: 'red'    },
+  first_scan:          { title: 'Body Analyst',           emoji: '🔬', desc: 'Completed your first body scan', color: 'purple' },
+  first_measurement:   { title: 'Precision Tracker',     emoji: '📏', desc: 'Logged body measurements',    color: 'green'  },
+  streak_3:            { title: 'On a Roll!',             emoji: '🔄', desc: '3-day workout streak',        color: 'green'  },
+  streak_7:            { title: 'Week Warrior',           emoji: '🗓️', desc: '7-day workout streak',        color: 'amber'  }
 };
 
 /* ---------- Tiny Utility ---------- */
