@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FitFlow AI — Admin Dashboard</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
@@ -12,313 +11,323 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     :root {
-      --bg:       #0a0a0f;
-      --bg2:      #0f0f1a;
-      --bg3:      #14141f;
-      --card:     rgba(255,255,255,0.04);
-      --border:   rgba(255,255,255,0.08);
-      --text:     #f0f0ff;
-      --muted:    rgba(255,255,255,0.45);
-      --blue:     #00d4ff;
-      --green:    #00ff88;
-      --amber:    #ffaa00;
-      --purple:   #a855f7;
-      --red:      #ff4757;
-      --sidebar:  200px;
+      --bg:#0a0a0f; --bg2:#0f0f1a; --card:rgba(255,255,255,0.04);
+      --border:rgba(255,255,255,0.08); --text:#f0f0ff;
+      --muted:rgba(255,255,255,0.45);
+      --blue:#00d4ff; --green:#00ff88; --amber:#ffaa00;
+      --purple:#a855f7; --red:#ff4757; --sidebar:220px;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden}
 
-    /* ── Login Screen ── */
-    #login-screen {
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.06) 0%, transparent 60%),
-                  radial-gradient(ellipse at 80% 20%, rgba(168,85,247,0.07) 0%, transparent 60%),
-                  var(--bg);
+    /* LOGIN */
+    #login-screen{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      background:radial-gradient(ellipse at 20% 50%,rgba(0,212,255,0.07) 0%,transparent 60%),
+                 radial-gradient(ellipse at 80% 20%,rgba(168,85,247,0.08) 0%,transparent 60%),var(--bg);
     }
-    .login-box {
-      width: 400px; padding: 48px 40px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px; backdrop-filter: blur(20px);
-      box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+    .login-box{
+      width:min(400px,94vw);padding:44px 36px;
+      background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+      border-radius:24px;backdrop-filter:blur(20px);
+      box-shadow:0 40px 80px rgba(0,0,0,0.6);
     }
-    .login-logo { text-align: center; margin-bottom: 32px; }
-    .login-logo .logo-icon {
-      width: 60px; height: 60px; border-radius: 16px; margin: 0 auto 12px;
-      background: linear-gradient(135deg, #00d4ff, #a855f7);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; color: #fff;
+    .login-logo{text-align:center;margin-bottom:28px}
+    .login-logo-icon{
+      width:58px;height:58px;border-radius:16px;margin:0 auto 12px;
+      background:linear-gradient(135deg,#00d4ff,#a855f7);
+      display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;
     }
-    .login-logo h1 { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; }
-    .login-logo p  { font-size: 13px; color: var(--muted); margin-top: 4px; }
-    .login-field { margin-bottom: 16px; }
-    .login-field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-    .login-field input {
-      width: 100%; padding: 12px 16px; border-radius: 10px;
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-      color: var(--text); font-size: 14px; outline: none; font-family: 'Inter', sans-serif;
-      transition: border 0.2s;
+    .login-logo h1{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800}
+    .login-logo p{font-size:12px;color:var(--muted);margin-top:3px}
+    .lf{margin-bottom:14px}
+    .lf label{display:block;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+    .lf input{
+      width:100%;padding:11px 14px;border-radius:10px;
+      background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+      color:var(--text);font-size:14px;outline:none;font-family:'Inter',sans-serif;
+      transition:border .2s;
     }
-    .login-field input:focus { border-color: var(--blue); }
-    .login-btn {
-      width: 100%; padding: 13px; border-radius: 12px; border: none; cursor: pointer;
-      background: linear-gradient(135deg, #00d4ff, #a855f7); color: #fff;
-      font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700;
-      margin-top: 8px; transition: opacity 0.2s; letter-spacing: 0.03em;
+    .lf input:focus{border-color:var(--blue)}
+    .login-btn{
+      width:100%;padding:12px;border-radius:12px;border:none;cursor:pointer;
+      background:linear-gradient(135deg,#00d4ff,#a855f7);color:#fff;
+      font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;margin-top:6px;
+      transition:opacity .2s;
     }
-    .login-btn:hover { opacity: 0.88; }
-    .login-error { color: var(--red); font-size: 12px; text-align: center; margin-top: 10px; min-height: 18px; }
+    .login-btn:hover{opacity:.88}
+    .login-error{color:var(--red);font-size:12px;text-align:center;margin-top:10px;min-height:18px}
+    .login-hint{
+      margin-top:14px;padding:10px 14px;border-radius:8px;
+      background:rgba(0,212,255,0.06);border:1px solid rgba(0,212,255,0.2);
+      font-size:12px;color:var(--muted);text-align:center;
+    }
+    .login-hint strong{color:var(--blue)}
 
-    /* ── App Shell ── */
-    #app-shell { display: none; flex-direction: row; min-height: 100vh; }
+    /* APP SHELL */
+    #app-shell{display:none;min-height:100vh}
 
-    /* ── Sidebar ── */
-    #sidebar {
-      width: var(--sidebar); background: var(--bg2); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100;
-      padding: 20px 0;
+    /* SIDEBAR */
+    #sidebar{
+      width:var(--sidebar);background:var(--bg2);border-right:1px solid var(--border);
+      display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;
+      padding:0;overflow-y:auto;transition:transform .3s cubic-bezier(.4,0,.2,1);
     }
-    .sb-logo {
-      display: flex; align-items: center; gap: 10px; padding: 0 18px 20px;
-      border-bottom: 1px solid var(--border); margin-bottom: 16px;
+    .sb-logo{
+      display:flex;align-items:center;gap:10px;padding:18px 16px;
+      border-bottom:1px solid var(--border);flex-shrink:0;
     }
-    .sb-logo-icon {
-      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
-      background: linear-gradient(135deg,#00d4ff,#a855f7);
-      display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff;
+    .sb-logo-icon{
+      width:34px;height:34px;border-radius:9px;flex-shrink:0;
+      background:linear-gradient(135deg,#00d4ff,#a855f7);
+      display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;
     }
-    .sb-logo-text { font-family: 'Outfit',sans-serif; font-size: 14px; font-weight: 800; line-height: 1.2; }
-    .sb-logo-sub  { font-size: 10px; color: var(--muted); }
-    .sb-nav-item  {
-      display: flex; align-items: center; gap: 10px; padding: 10px 18px; cursor: pointer;
-      font-size: 13px; font-weight: 500; color: var(--muted); border-radius: 0;
-      transition: all 0.2s; border-left: 2px solid transparent; margin-bottom: 2px;
+    .sb-logo-text{font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;line-height:1.2}
+    .sb-logo-sub{font-size:10px;color:var(--muted)}
+    .sb-nav{padding:10px 8px;flex:1}
+    .sb-item{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;
+      font-size:13px;font-weight:500;color:var(--muted);
+      transition:all .2s;border-left:2px solid transparent;border-radius:0 8px 8px 0;
+      margin-bottom:2px;
     }
-    .sb-nav-item:hover  { color: var(--text); background: rgba(255,255,255,0.04); }
-    .sb-nav-item.active { color: var(--blue); border-left-color: var(--blue); background: rgba(0,212,255,0.06); }
-    .sb-nav-item i { width: 16px; text-align: center; }
-    .sb-bottom { margin-top: auto; padding: 16px 18px; border-top: 1px solid var(--border); }
-    .sb-logout-btn {
-      width: 100%; padding: 9px; border-radius: 8px; border: 1px solid rgba(255,71,87,0.3);
-      background: rgba(255,71,87,0.08); color: var(--red); font-size: 13px; font-weight: 600;
-      cursor: pointer; transition: all 0.2s;
+    .sb-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+    .sb-item.active{color:var(--blue);border-left-color:var(--blue);background:rgba(0,212,255,0.06)}
+    .sb-item i{width:16px;text-align:center}
+    .sb-bottom{padding:14px 16px;border-top:1px solid var(--border);flex-shrink:0}
+    .sb-credit{
+      padding:10px 14px;font-size:10px;color:var(--muted);
+      text-align:center;line-height:1.7;border-top:1px solid var(--border);flex-shrink:0;
     }
-    .sb-logout-btn:hover { background: rgba(255,71,87,0.15); }
+    .sb-credit strong{color:var(--blue)}
+    .sb-logout{
+      width:100%;padding:8px;border-radius:8px;border:1px solid rgba(255,71,87,0.3);
+      background:rgba(255,71,87,0.08);color:var(--red);font-size:13px;font-weight:600;
+      cursor:pointer;transition:all .2s;
+    }
+    .sb-logout:hover{background:rgba(255,71,87,0.18)}
 
-    /* ── Main Content ── */
-    #main {
-      margin-left: var(--sidebar); flex: 1; padding: 28px 32px;
-      overflow-y: auto; background: var(--bg);
+    /* MAIN */
+    #main{margin-left:var(--sidebar);padding:26px 28px;background:var(--bg);min-height:100vh}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      margin-bottom:24px;flex-wrap:wrap;gap:12px;
     }
-    .topbar {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    .topbar-title{font-family:'Outfit',sans-serif;font-size:22px;font-weight:900}
+    .topbar-sub{font-size:12px;color:var(--muted);margin-top:2px}
+    .live-badge{
+      display:flex;align-items:center;gap:7px;padding:6px 13px;
+      background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);
+      border-radius:999px;font-size:12px;font-weight:700;color:var(--green);
     }
-    .topbar-title { font-family: 'Outfit',sans-serif; font-size: 24px; font-weight: 900; }
-    .topbar-meta  { font-size: 13px; color: var(--muted); margin-top: 2px; }
-    .live-badge {
-      display: flex; align-items: center; gap: 8px; padding: 7px 14px;
-      background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.25);
-      border-radius: 999px; font-size: 12px; font-weight: 700; color: var(--green);
-    }
-    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); animation: pulse 1.5s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
 
-    /* ── Cards ── */
-    .card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 22px 24px; backdrop-filter: blur(10px);
+    /* CARDS */
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+    .stat-card{
+      background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;
+      position:relative;overflow:hidden;
     }
-    .stat-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
-    .stat-card {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
+    .stat-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:16px 16px 0 0;
     }
-    .stat-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      border-radius: 16px 16px 0 0;
-    }
-    .stat-card.blue::before  { background: var(--blue);   }
-    .stat-card.green::before { background: var(--green);  }
-    .stat-card.amber::before { background: var(--amber);  }
-    .stat-card.purple::before{ background: var(--purple); }
-    .stat-icon { font-size: 22px; margin-bottom: 12px; }
-    .stat-val  { font-family: 'Outfit',sans-serif; font-size: 32px; font-weight: 900; line-height: 1; }
-    .stat-lbl  { font-size: 13px; color: var(--muted); margin-top: 4px; }
-    .stat-sub  { font-size: 11px; color: var(--muted); margin-top: 6px; }
+    .stat-card.blue::before{background:var(--blue)}
+    .stat-card.green::before{background:var(--green)}
+    .stat-card.amber::before{background:var(--amber)}
+    .stat-card.purple::before{background:var(--purple)}
+    .stat-icon{font-size:20px;margin-bottom:10px}
+    .stat-val{font-family:'Outfit',sans-serif;font-size:30px;font-weight:900;line-height:1}
+    .stat-lbl{font-size:12px;color:var(--muted);margin-top:4px}
+    .stat-sub{font-size:11px;color:var(--muted);margin-top:5px}
 
-    /* ── Section ── */
-    .section { margin-bottom: 24px; }
-    .section-title {
-      font-family: 'Outfit',sans-serif; font-size: 16px; font-weight: 700;
-      margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+    /* SECTIONS */
+    .section{margin-bottom:22px}
+    .sec-title{
+      font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;
+      margin-bottom:12px;display:flex;align-items:center;gap:8px;
     }
-    .section-title span { font-size: 18px; }
 
-    /* ── Map ── */
-    #visitor-map { height: 400px; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
-
-    /* ── Chart grid ── */
-    .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
-    .chart-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
-    .chart-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
-    .chart-canvas { height: 220px; }
-
-    /* ── Table ── */
-    .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-    .table-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 22px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+    /* REALTIME BAR */
+    .rt-bar{
+      display:flex;gap:18px;background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.12);
+      border-radius:12px;padding:14px 20px;margin-bottom:22px;flex-wrap:wrap;
     }
-    .table-header-title { font-size: 15px; font-weight: 700; }
-    .search-input {
-      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
-      background: rgba(255,255,255,0.05); color: var(--text); font-size: 13px; outline: none;
-      font-family: 'Inter', sans-serif; width: 220px;
-    }
-    .search-input::placeholder { color: var(--muted); }
-    table { width: 100%; border-collapse: collapse; }
-    thead tr { border-bottom: 1px solid var(--border); }
-    th { text-align: left; padding: 12px 18px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
-    td { padding: 12px 18px; font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.04); }
-    tbody tr:hover { background: rgba(255,255,255,0.03); }
-    tbody tr:last-child td { border-bottom: none; }
-    .user-avatar {
-      width: 32px; height: 32px; border-radius: 50%;
-      background: linear-gradient(135deg,#00d4ff,#a855f7);
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Outfit',sans-serif; font-size: 13px; font-weight: 800; color: #fff; flex-shrink: 0;
-    }
-    .user-row-info { display: flex; align-items: center; gap: 10px; }
+    .rt-item{display:flex;flex-direction:column}
+    .rt-val{font-family:'Outfit',sans-serif;font-size:20px;font-weight:800;color:var(--green)}
+    .rt-lbl{font-size:11px;color:var(--muted);margin-top:1px}
 
-    /* ── Badges ── */
-    .badge { display: inline-block; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; }
-    .badge-blue   { background: rgba(0,212,255,0.12); color: var(--blue); border: 1px solid rgba(0,212,255,0.2); }
-    .badge-green  { background: rgba(0,255,136,0.12); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
-    .badge-amber  { background: rgba(255,170,0,0.12); color: var(--amber); border: 1px solid rgba(255,170,0,0.2); }
-    .badge-purple { background: rgba(168,85,247,0.12); color: var(--purple); border: 1px solid rgba(168,85,247,0.2); }
-    .badge-red    { background: rgba(255,71,87,0.12); color: var(--red); border: 1px solid rgba(255,71,87,0.2); }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
-      border-radius: 10px; border: none; cursor: pointer; font-size: 13px; font-weight: 600;
-      font-family: 'Inter',sans-serif; transition: all 0.2s;
+    /* ALERT / STATUS */
+    .status-bar{
+      display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:10px;
+      margin-bottom:18px;font-size:13px;
     }
-    .btn-primary { background: linear-gradient(135deg,#00d4ff,#0099cc); color: #fff; }
-    .btn-success { background: linear-gradient(135deg,#00ff88,#00cc6a); color: #000; }
-    .btn-secondary { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--border); }
-    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .status-bar.info{background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--blue)}
+    .status-bar.warn{background:rgba(255,170,0,0.08);border:1px solid rgba(255,170,0,0.25);color:var(--amber)}
+    .status-bar.ok{background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);color:var(--green)}
 
-    /* ── Empty state ── */
-    .empty-state { text-align: center; padding: 40px; color: var(--muted); }
-    .empty-state i { font-size: 36px; margin-bottom: 12px; display: block; }
+    /* CHART */
+    .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px}
+    .chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px}
+    .chart-title{font-size:13px;font-weight:700;margin-bottom:14px}
+    .chart-canvas{height:200px}
 
-    /* ── Country flag ── */
-    .flag { font-size: 16px; }
+    /* MAP */
+    #visitor-map{height:380px;border-radius:14px;overflow:hidden;border:1px solid var(--border)}
 
-    /* ── Sections visibility ── */
-    .admin-section { display: none; }
-    .admin-section.active { display: block; }
-
-    /* ── Refresh indicator ── */
-    #last-refresh { font-size: 12px; color: var(--muted); }
-
-    /* ── Real-time ticker ── */
-    .realtime-bar {
-      display: flex; gap: 20px; background: rgba(0,255,136,0.04); border: 1px solid rgba(0,255,136,0.12);
-      border-radius: 12px; padding: 12px 20px; margin-bottom: 24px; flex-wrap: wrap;
+    /* TABLE */
+    .tbl-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+    .tbl-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:16px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;
     }
-    .rt-item { display: flex; flex-direction: column; }
-    .rt-val { font-family: 'Outfit',sans-serif; font-size: 20px; font-weight: 800; color: var(--green); }
-    .rt-lbl { font-size: 11px; color: var(--muted); margin-top: 1px; }
+    .tbl-title{font-size:14px;font-weight:700}
+    .tbl-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .srch{
+      padding:8px 13px;border-radius:8px;border:1px solid var(--border);
+      background:rgba(255,255,255,0.05);color:var(--text);font-size:13px;outline:none;
+      font-family:'Inter',sans-serif;width:200px;
+    }
+    .srch::placeholder{color:var(--muted)}
+    .tbl-scroll{overflow-x:auto}
+    table{width:100%;border-collapse:collapse}
+    thead tr{border-bottom:1px solid var(--border)}
+    th{
+      text-align:left;padding:11px 16px;
+      font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+      white-space:nowrap;
+    }
+    td{padding:11px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+    tbody tr:hover{background:rgba(255,255,255,0.03)}
+    tbody tr:last-child td{border-bottom:none}
+    .avatar{
+      width:30px;height:30px;border-radius:50%;
+      background:linear-gradient(135deg,#00d4ff,#a855f7);
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Outfit',sans-serif;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;
+    }
+    .user-cell{display:flex;align-items:center;gap:9px}
 
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-      /* ── Mobile Responsive ── */
-    @media (max-width: 768px) {
-      :root { --sidebar: 240px; }
-      #sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-        z-index: 200;
-        box-shadow: none;
-      }
-      #sidebar.mob-open {
-        transform: translateX(0);
-        box-shadow: 4px 0 40px rgba(0,0,0,0.7);
-      }
-      #main { margin-left: 0 !important; padding: 60px 16px 20px; }
-      .stat-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .stat-card { padding: 14px; }
-      .stat-val { font-size: 24px; }
-      .chart-grid { grid-template-columns: 1fr; }
-      .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .search-input { width: 100%; }
-      .table-header { flex-direction: column; align-items: flex-start; }
-      td, th { padding: 9px 12px; font-size: 12px; }
-      #visitor-map { height: 280px; }
-      .mob-menu-btn { display: flex; }
-      .mob-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 199; backdrop-filter: blur(4px); }
-      .mob-overlay.visible { display: block; }
+    /* BADGES */
+    .badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:11px;font-weight:700}
+    .badge-blue{background:rgba(0,212,255,0.12);color:var(--blue);border:1px solid rgba(0,212,255,0.2)}
+    .badge-green{background:rgba(0,255,136,0.12);color:var(--green);border:1px solid rgba(0,255,136,0.2)}
+    .badge-amber{background:rgba(255,170,0,0.12);color:var(--amber);border:1px solid rgba(255,170,0,0.2)}
+    .badge-purple{background:rgba(168,85,247,0.12);color:var(--purple);border:1px solid rgba(168,85,247,0.2)}
+    .badge-red{background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.2)}
+    .badge-gray{background:rgba(255,255,255,0.06);color:var(--muted);border:1px solid var(--border)}
+
+    /* BUTTONS */
+    .btn{
+      display:inline-flex;align-items:center;gap:7px;padding:8px 14px;
+      border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:600;
+      font-family:'Inter',sans-serif;transition:all .2s;
     }
-    @media (max-width: 480px) {
-      .stat-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
-      .stat-val { font-size: 20px; }
-      #main { padding: 56px 12px 16px; }
-      th { display: none; }
-      td { display: block; border-bottom: 1px solid rgba(255,255,255,0.04); }
-      td::before { content: attr(data-label); display: block; font-size: 10px; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 2px; }
-      .user-row-info { flex-direction: column; align-items: flex-start; }
+    .btn-primary{background:linear-gradient(135deg,#00d4ff,#0099cc);color:#fff}
+    .btn-success{background:linear-gradient(135deg,#00ff88,#00cc6a);color:#000}
+    .btn-secondary{background:rgba(255,255,255,0.08);color:var(--text);border:1px solid var(--border)}
+    .btn-amber{background:linear-gradient(135deg,#ffaa00,#e67e00);color:#000}
+    .btn:hover{opacity:.85;transform:translateY(-1px)}
+
+    /* EMPTY */
+    .empty{text-align:center;padding:36px;color:var(--muted)}
+    .empty i{font-size:32px;margin-bottom:10px;display:block;opacity:.4}
+    .empty h3{font-size:15px;margin-bottom:6px}
+    .empty p{font-size:13px}
+
+    /* MOBILE */
+    .mob-btn{
+      display:none;position:fixed;top:13px;left:13px;z-index:200;
+      width:40px;height:40px;border-radius:8px;
+      background:rgba(10,10,20,0.95);border:1px solid rgba(255,255,255,0.1);
+      color:#fff;font-size:15px;cursor:pointer;align-items:center;justify-content:center;
+      backdrop-filter:blur(16px);
     }
-    /* Hamburger button */
-    .mob-menu-btn {
-      display: none;
-      position: fixed; top: 14px; left: 14px; z-index: 210;
-      width: 40px; height: 40px; border-radius: 8px;
-      background: rgba(14,14,28,0.95); border: 1px solid rgba(255,255,255,0.1);
-      color: #fff; font-size: 15px; cursor: pointer;
-      align-items: center; justify-content: center;
-      backdrop-filter: blur(16px);
+    .mob-overlay{
+      display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99;backdrop-filter:blur(4px);
     }
-    /* Admin credit */
-    .admin-credit {
-      padding: 12px 16px; font-size: 11px; color: rgba(255,255,255,0.35);
-      text-align: center; line-height: 1.7; border-top: 1px solid rgba(255,255,255,0.07);
-      flex-shrink: 0;
+    .mob-overlay.vis{display:block}
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar{width:5px;height:5px}
+    ::-webkit-scrollbar-track{background:transparent}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+    /* DEBUG BOX */
+    .debug-box{
+      background:rgba(255,170,0,0.06);border:1px solid rgba(255,170,0,0.2);
+      border-radius:12px;padding:16px;margin-bottom:16px;
     }
-    .admin-credit strong { color: #00d4ff; }
+    .debug-box pre{
+      font-family:monospace;font-size:11px;color:var(--amber);
+      overflow-x:auto;max-height:160px;line-height:1.5;
+    }
+
+    /* TABS */
+    .admin-section{display:none}
+    .admin-section.active{display:block}
+
+    /* RESPONSIVE */
+    @media (max-width:900px){
+      .stat-grid{grid-template-columns:1fr 1fr;gap:10px}
+      .chart-grid{grid-template-columns:1fr}
+    }
+    @media (max-width:768px){
+      .mob-btn{display:flex}
+      #sidebar{transform:translateX(-100%)}
+      #sidebar.open{transform:translateX(0);box-shadow:4px 0 40px rgba(0,0,0,.7)}
+      #main{margin-left:0!important;padding:56px 14px 20px}
+      .stat-grid{grid-template-columns:1fr 1fr;gap:8px}
+      .stat-card{padding:14px}
+      .stat-val{font-size:22px}
+      .topbar{flex-direction:column;align-items:flex-start}
+      .tbl-header{flex-direction:column;align-items:flex-start}
+      .srch{width:100%}
+      .chart-grid{grid-template-columns:1fr}
+      #visitor-map{height:260px}
+      th{font-size:9px;padding:9px 10px}
+      td{padding:9px 10px;font-size:12px}
+      .rt-bar{gap:12px}
+    }
+    @media (max-width:480px){
+      .stat-grid{gap:6px}
+      .stat-card{padding:12px}
+      .stat-val{font-size:19px}
+    }
   </style>
 </head>
 <body>
-<!-- Mobile Menu -->
-<button class="mob-menu-btn" id="mob-menu-btn"><i class="fas fa-bars"></i></button>
+
+<!-- Hamburger (mobile) -->
+<button class="mob-btn" id="mob-btn"><i class="fas fa-bars"></i></button>
 <div class="mob-overlay" id="mob-overlay"></div>
 
-<!-- LOGIN SCREEN -->
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="logo-icon"><i class="fas fa-bolt"></i></div>
-      <h1>FitFlow AI</h1>
-      <p>Admin Dashboard — Restricted Access</p>
+      <div class="login-logo-icon"><i class="fas fa-shield-alt"></i></div>
+      <h1>FitFlow AI Admin</h1>
+      <p>Restricted Dashboard — Authorized Access Only</p>
     </div>
-    <div class="login-field">
-      <label>Admin Username</label>
-      <input type="text" id="admin-user-input" placeholder="admin" value="admin">
+    <div class="lf">
+      <label>Username</label>
+      <input type="text" id="a-user" value="admin" placeholder="admin">
     </div>
-    <div class="login-field">
+    <div class="lf">
       <label>Password</label>
-      <input type="password" id="admin-pass-input" placeholder="Enter admin password" autocomplete="off">
+      <input type="password" id="a-pass" placeholder="Enter admin password" autocomplete="off">
     </div>
-    <button class="login-btn" id="admin-login-btn">
-      <i class="fas fa-sign-in-alt"></i> &nbsp; Sign In to Dashboard
+    <button class="login-btn" id="a-login-btn">
+      <i class="fas fa-unlock-alt"></i> &nbsp;Sign In to Dashboard
     </button>
-    <div class="login-error" id="login-error"></div>
-    <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:20px;">
-      FitFlow AI Admin v1.0 &nbsp;·&nbsp; Authorized Personnel Only
+    <div class="login-error" id="a-error"></div>
+    <div class="login-hint">
+      Default password: <strong>fitflow@admin2026</strong>
+    </div>
+    <p style="text-align:center;font-size:11px;color:var(--muted);margin-top:16px;">
+      Created by <strong style="color:var(--blue)">Arnav Singh</strong> &copy; 2026
     </p>
   </div>
 </div>
@@ -326,7 +335,6 @@
 <!-- APP SHELL -->
 <div id="app-shell">
 
-  <!-- Sidebar -->
   <aside id="sidebar">
     <div class="sb-logo">
       <div class="sb-logo-icon"><i class="fas fa-bolt"></i></div>
@@ -336,647 +344,698 @@
       </div>
     </div>
 
-    <nav>
-      <div class="sb-nav-item active" data-section="overview"><i class="fas fa-th-large"></i> Overview</div>
-      <div class="sb-nav-item" data-section="users"><i class="fas fa-users"></i> Registered Users</div>
-      <div class="sb-nav-item" data-section="visitors"><i class="fas fa-eye"></i> Visitor Logs</div>
-      <div class="sb-nav-item" data-section="map"><i class="fas fa-map-marked-alt"></i> Live Map</div>
+    <nav class="sb-nav">
+      <div class="sb-item active" data-sec="overview"><i class="fas fa-th-large"></i> Overview</div>
+      <div class="sb-item" data-sec="users"><i class="fas fa-users"></i> Registered Users</div>
+      <div class="sb-item" data-sec="visitors"><i class="fas fa-eye"></i> Visitor Logs</div>
+      <div class="sb-item" data-sec="map"><i class="fas fa-map-marked-alt"></i> Live Map</div>
+      <div class="sb-item" data-sec="debug"><i class="fas fa-bug"></i> Data Debug</div>
     </nav>
 
     <div class="sb-bottom">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:10px;text-align:center;" id="last-refresh">
-        Auto-refresh: 30s
-      </div>
-      <button class="sb-logout-btn" id="logout-btn">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
+      <div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:8px;" id="last-refresh-lbl">Auto-refresh: 30s</div>
+      <button class="sb-logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
-      <!-- Admin Credit in sidebar -->
-    <div class="admin-credit">
+
+    <div class="sb-credit">
       Made by <strong>Arnav Singh</strong><br>
-      &copy; 2025 All Rights Reserved
+      &copy; 2026 All Rights Reserved
     </div>
   </aside>
 
-  <!-- Main Content -->
   <main id="main">
 
-    <!-- Topbar -->
+    <!-- Top bar -->
     <div class="topbar">
       <div>
         <div class="topbar-title">Analytics Dashboard</div>
-        <div class="topbar-meta" id="live-clock">Loading...</div>
+        <div class="topbar-sub" id="clock-display">Loading...</div>
       </div>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
         <div class="live-badge"><div class="live-dot"></div> LIVE</div>
         <button class="btn btn-secondary" id="refresh-btn"><i class="fas fa-sync-alt"></i> Refresh</button>
-        <a href="index.html" class="btn btn-secondary" target="_blank"><i class="fas fa-external-link-alt"></i> View App</a>
+        <a href="index.html" class="btn btn-secondary" target="_blank"><i class="fas fa-external-link-alt"></i> Open App</a>
       </div>
     </div>
 
-    <!-- ── OVERVIEW SECTION ── -->
+    <!-- ── OVERVIEW ── -->
     <div class="admin-section active" id="section-overview">
 
-      <!-- Real-time Bar -->
-      <div class="realtime-bar">
-        <div class="rt-item">
-          <div class="rt-val" id="rt-today">0</div>
-          <div class="rt-lbl">Visits Today</div>
-        </div>
-        <div class="rt-item">
-          <div class="rt-val" id="rt-last-visit">—</div>
-          <div class="rt-lbl">Last Visit</div>
-        </div>
-        <div class="rt-item">
-          <div class="rt-val" id="rt-clock">00:00:00</div>
-          <div class="rt-lbl">Server Time</div>
-        </div>
-        <div class="rt-item">
-          <div class="rt-val" id="rt-online">1</div>
-          <div class="rt-lbl">Active Now</div>
-        </div>
+      <!-- Storage Status -->
+      <div id="storage-status-bar" class="status-bar info">
+        <i class="fas fa-spinner fa-spin"></i> Checking localStorage connection...
+      </div>
+
+      <!-- Real-time bar -->
+      <div class="rt-bar">
+        <div class="rt-item"><div class="rt-val" id="rt-today">0</div><div class="rt-lbl">Visits Today</div></div>
+        <div class="rt-item"><div class="rt-val" id="rt-total">0</div><div class="rt-lbl">Total Visits</div></div>
+        <div class="rt-item"><div class="rt-val" id="rt-users">0</div><div class="rt-lbl">Registered Users</div></div>
+        <div class="rt-item"><div class="rt-val" id="rt-clock">00:00:00</div><div class="rt-lbl">Server Time</div></div>
       </div>
 
       <!-- Stat Cards -->
       <div class="stat-grid">
         <div class="stat-card blue">
           <div class="stat-icon">👁️</div>
-          <div class="stat-val" id="stat-total-visits">—</div>
+          <div class="stat-val" id="s-total">—</div>
           <div class="stat-lbl">Total Visits</div>
-          <div class="stat-sub" id="stat-visits-sub"></div>
+          <div class="stat-sub" id="s-total-sub"></div>
         </div>
         <div class="stat-card green">
           <div class="stat-icon">🌐</div>
-          <div class="stat-val" id="stat-unique-ips">—</div>
+          <div class="stat-val" id="s-unique">—</div>
           <div class="stat-lbl">Unique Visitors</div>
-          <div class="stat-sub" id="stat-ips-sub"></div>
+          <div class="stat-sub" id="s-unique-sub"></div>
         </div>
         <div class="stat-card amber">
           <div class="stat-icon">👤</div>
-          <div class="stat-val" id="stat-users">—</div>
+          <div class="stat-val" id="s-users">—</div>
           <div class="stat-lbl">Registered Users</div>
-          <div class="stat-sub" id="stat-users-sub"></div>
+          <div class="stat-sub" id="s-users-sub"></div>
         </div>
         <div class="stat-card purple">
-          <div class="stat-icon">🗺️</div>
-          <div class="stat-val" id="stat-countries">—</div>
-          <div class="stat-lbl">Countries Reached</div>
-          <div class="stat-sub" id="stat-countries-sub"></div>
+          <div class="stat-icon">🌍</div>
+          <div class="stat-val" id="s-countries">—</div>
+          <div class="stat-lbl">Countries</div>
+          <div class="stat-sub" id="s-countries-sub"></div>
         </div>
       </div>
 
       <!-- Charts -->
       <div class="chart-grid">
         <div class="chart-wrap">
-          <div class="chart-title">📅 Visits per Day (Last 7 Days)</div>
-          <div class="chart-canvas"><canvas id="visits-chart"></canvas></div>
+          <div class="chart-title">📅 Visits — Last 7 Days</div>
+          <div class="chart-canvas"><canvas id="chart-visits"></canvas></div>
         </div>
         <div class="chart-wrap">
           <div class="chart-title">🌐 Browser Distribution</div>
-          <div class="chart-canvas"><canvas id="browser-chart"></canvas></div>
+          <div class="chart-canvas"><canvas id="chart-browser"></canvas></div>
         </div>
       </div>
-
-      <!-- OS + Device mini row -->
       <div class="chart-grid">
         <div class="chart-wrap">
           <div class="chart-title">💻 Operating Systems</div>
-          <div class="chart-canvas"><canvas id="os-chart"></canvas></div>
+          <div class="chart-canvas"><canvas id="chart-os"></canvas></div>
         </div>
         <div class="chart-wrap">
           <div class="chart-title">📱 Device Types</div>
-          <div class="chart-canvas"><canvas id="device-chart"></canvas></div>
+          <div class="chart-canvas"><canvas id="chart-device"></canvas></div>
         </div>
       </div>
     </div>
 
-    <!-- ── USERS SECTION ── -->
+    <!-- ── USERS ── -->
     <div class="admin-section" id="section-users">
-      <div class="section">
-        <div class="table-wrap">
-          <div class="table-header">
-            <div class="table-header-title">👥 Registered Users <span id="user-count-badge" style="font-size:13px;color:var(--muted);font-weight:400;"></span></div>
-            <input class="search-input" id="user-search" type="text" placeholder="🔍  Search by name or email...">
+      <div class="tbl-wrap">
+        <div class="tbl-header">
+          <div class="tbl-title">👥 Registered Users <span id="u-count" style="font-size:13px;color:var(--muted);font-weight:400"></span></div>
+          <div class="tbl-actions">
+            <input class="srch" id="user-search" type="text" placeholder="🔍  Search name / email...">
+            <button class="btn btn-amber" id="seed-btn"><i class="fas fa-vial"></i> Add Sample User</button>
           </div>
-          <div style="overflow-x:auto;">
-            <table id="users-table">
-              <thead>
-                <tr>
-                  <th>User</th>
-                  <th>Email</th>
-                  <th>Goal</th>
-                  <th>Stats</th>
-                  <th>Workouts</th>
-                  <th>Cal Burned</th>
-                  <th>Joined</th>
-                </tr>
-              </thead>
-              <tbody id="users-tbody"></tbody>
-            </table>
-          </div>
+        </div>
+        <div class="tbl-scroll">
+          <table id="users-tbl">
+            <thead><tr>
+              <th>User</th><th>Email</th><th>Goal</th>
+              <th>Weight</th><th>Height</th><th>BMI</th>
+              <th>Workouts</th><th>Cal Burned</th><th>Joined</th>
+            </tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- ── VISITORS SECTION ── -->
+    <!-- ── VISITORS ── -->
     <div class="admin-section" id="section-visitors">
-      <div class="section">
-        <div class="table-wrap">
-          <div class="table-header">
-            <div class="table-header-title">📋 Visitor Log <span id="visitor-count-badge" style="font-size:13px;color:var(--muted);font-weight:400;"></span></div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;">
-              <input class="search-input" id="visitor-search" type="text" placeholder="🔍  Search by city, country, IP...">
-              <button class="btn btn-success" id="export-csv-btn"><i class="fas fa-download"></i> Export CSV</button>
-            </div>
+      <div class="tbl-wrap">
+        <div class="tbl-header">
+          <div class="tbl-title">📋 Visitor Log <span id="v-count" style="font-size:13px;color:var(--muted);font-weight:400"></span></div>
+          <div class="tbl-actions">
+            <input class="srch" id="visitor-search" type="text" placeholder="🔍  Search IP, city, country...">
+            <button class="btn btn-success" id="export-btn"><i class="fas fa-download"></i> Export CSV</button>
+            <button class="btn btn-secondary" id="clear-visits-btn"><i class="fas fa-trash"></i> Clear All</button>
           </div>
-          <div style="overflow-x:auto;max-height:600px;overflow-y:auto;">
-            <table id="visitors-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Time</th>
-                  <th>IP Address</th>
-                  <th>Location</th>
-                  <th>Browser</th>
-                  <th>OS</th>
-                  <th>Device</th>
-                  <th>Screen</th>
-                  <th>User</th>
-                </tr>
-              </thead>
-              <tbody id="visitors-tbody"></tbody>
-            </table>
-          </div>
+        </div>
+        <div class="tbl-scroll" style="max-height:550px;overflow-y:auto">
+          <table id="visits-tbl">
+            <thead><tr>
+              <th>#</th><th>Time</th><th>IP</th><th>Location</th>
+              <th>Browser</th><th>OS</th><th>Device</th><th>Screen</th><th>User</th>
+            </tr></thead>
+            <tbody id="visits-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
 
-    <!-- ── MAP SECTION ── -->
+    <!-- ── MAP ── -->
     <div class="admin-section" id="section-map">
       <div class="section">
-        <div class="section-title"><span>🗺️</span> Live Visitor World Map</div>
-        <div style="margin-bottom:12px;font-size:13px;color:var(--muted);">
-          Each pin represents a unique visitor location based on their IP address. Zoom in to see city-level data.
-        </div>
+        <div class="sec-title"><span>🗺️</span> Live Visitor World Map</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Visitor locations detected via IP geolocation. Zoom in for city-level detail.</p>
         <div id="visitor-map"></div>
-        <div style="margin-top:12px;display:flex;gap:14px;flex-wrap:wrap;">
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-            <div style="width:12px;height:12px;border-radius:50%;background:#00d4ff;"></div> Visitor Location
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;font-size:12px;">
-            <div style="width:12px;height:12px;border-radius:50%;background:#00ff88;"></div> Logged-in User
-          </div>
+        <div style="margin-top:10px;display:flex;gap:14px;flex-wrap:wrap;font-size:12px;">
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00d4ff;margin-right:5px;"></span>Guest Visitor</span>
+          <span><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:#00ff88;margin-right:5px;"></span>Logged-in User</span>
         </div>
       </div>
+    </div>
+
+    <!-- ── DEBUG ── -->
+    <div class="admin-section" id="section-debug">
+      <div class="card" style="margin-bottom:16px;">
+        <div class="sec-title">🔍 localStorage Diagnostic</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">
+          This panel shows exactly what's stored in your browser's localStorage from the FitFlow AI app.
+          The admin panel and the main app share the same storage only when opened in the <strong style="color:var(--amber)">same browser</strong>.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
+          <button class="btn btn-primary" id="run-diag-btn"><i class="fas fa-search"></i> Run Diagnostic</button>
+          <button class="btn btn-amber" id="add-sample-btn"><i class="fas fa-user-plus"></i> Add Sample User</button>
+          <button class="btn btn-secondary" id="add-sample-visit-btn"><i class="fas fa-eye"></i> Add Sample Visit</button>
+          <button class="btn btn-secondary" id="copy-import-link"><i class="fas fa-link"></i> Copy Import Instructions</button>
+        </div>
+        <div id="diag-output"></div>
+      </div>
+
+      <div class="card">
+        <div class="sec-title">ℹ️ How Data Works</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.8;">
+          <p style="margin-bottom:8px;">The FitFlow AI app stores all data in <strong style="color:var(--blue)">browser localStorage</strong> — a private storage area specific to each device and browser.</p>
+          <ul style="padding-left:18px;margin-bottom:10px;">
+            <li>If User A signs up on <strong>Chrome on PC</strong> → data is in Chrome's localStorage on that PC</li>
+            <li>If Admin opens admin.html on the <strong>same PC/Chrome</strong> → sees that user ✅</li>
+            <li>If Admin opens admin.html on a <strong>different device</strong> → sees nothing ❌</li>
+          </ul>
+          <p style="margin-bottom:8px;"><strong style="color:var(--amber)">To see ALL users from all devices</strong>, a backend database (Firebase, Supabase) is needed.</p>
+          <p>For now, open the admin panel <strong>in the same browser</strong> where users registered to see their data.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top:40px;padding:16px 0;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--muted);">
+      <span>FitFlow AI Admin &bull; Made by <strong style="color:var(--blue)">Arnav Singh</strong></span>
+      <span>&copy; 2026 All Rights Reserved</span>
     </div>
 
   </main>
 </div>
 
 <script>
-/* ──────────────────────────────────────────────
-   CONFIG
-────────────────────────────────────────────── */
-const ADMIN_PASSWORD = 'fitflow@admin2024';
-const ADMIN_USERNAME = 'admin';
+/* ── CONFIG ── */
+const PASS = 'fitflow@admin2026';
+const USER_KEY  = 'fitflow_users';
+const VISIT_KEY = 'fitflow_visits';
 
-/* ──────────────────────────────────────────────
-   HELPERS
-────────────────────────────────────────────── */
-function getVisits()  { try { return JSON.parse(localStorage.getItem('fitflow_visits') || '[]'); } catch(e){ return []; } }
-function getUsers()   { try { return JSON.parse(localStorage.getItem('fitflow_users')  || '[]'); } catch(e){ return []; } }
-
-function formatTime(iso) {
-  try {
-    const d = new Date(iso);
-    return d.toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' });
-  } catch(e) { return iso; }
+/* ── HELPERS ── */
+function getUsers()  { try { return JSON.parse(localStorage.getItem(USER_KEY)  || '[]'); } catch(e){ return []; } }
+function getVisits() { try { return JSON.parse(localStorage.getItem(VISIT_KEY) || '[]'); } catch(e){ return []; } }
+function todayStr()  { return new Date().toISOString().split('T')[0]; }
+function fmtTime(iso){ try { return new Date(iso).toLocaleString('en-IN',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}); } catch(e){ return iso||'—'; } }
+function flag(code)  { if(!code||code.length!==2) return '🌐'; return code.toUpperCase().split('').map(c=>String.fromCodePoint(c.charCodeAt(0)+127397)).join(''); }
+function countBy(arr,k){ return arr.reduce((a,v)=>{const x=v[k]||'Unknown';a[x]=(a[k]||0)+1;return a;},{}); }
+function goalLabel(g){
+  return {'fat-loss':'🔥 Fat Loss','muscle-gain':'💪 Muscle','calisthenics':'🏆 Calisthenics','height':'📏 Height','general':'⚖️ General'}[g]||g||'—';
 }
 
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-
-function countBy(arr, key) {
-  return arr.reduce((acc, v) => { const k = v[key]||'Unknown'; acc[k] = (acc[k]||0)+1; return acc; }, {});
-}
-
-function flagEmoji(code) {
-  if (!code || code.length !== 2) return '🌐';
-  return code.toUpperCase().split('').map(c => String.fromCodePoint(c.charCodeAt(0) + 127397)).join('');
-}
-
-function goalLabel(g) {
-  return { 'fat-loss':'🔥 Fat Loss', 'muscle-gain':'💪 Muscle Gain', 'calisthenics':'🏆 Calisthenics', 'height':'📏 Height', 'general':'⚖️ General' }[g] || g || '—';
-}
-
-/* ──────────────────────────────────────────────
-   LOGIN
-────────────────────────────────────────────── */
-document.getElementById('admin-login-btn').addEventListener('click', doLogin);
-document.getElementById('admin-pass-input').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+/* ── LOGIN ── */
+document.getElementById('a-login-btn').addEventListener('click', doLogin);
+document.getElementById('a-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
 
 function doLogin() {
-  const u = document.getElementById('admin-user-input').value.trim();
-  const p = document.getElementById('admin-pass-input').value;
-  const errEl = document.getElementById('login-error');
-  if (u === ADMIN_USERNAME && p === ADMIN_PASSWORD) {
+  const u = document.getElementById('a-user').value.trim();
+  const p = document.getElementById('a-pass').value;
+  const err = document.getElementById('a-error');
+  if (u === 'admin' && p === PASS) {
     document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app-shell').style.display   = 'flex';
-    initDashboard();
+    document.getElementById('app-shell').style.display = 'flex';
+    document.getElementById('app-shell').style.flexDirection = 'row';
+    initApp();
   } else {
-    errEl.textContent = '❌ Incorrect username or password.';
-    setTimeout(() => errEl.textContent = '', 3000);
+    err.textContent = '❌ Wrong username or password. Try: admin / fitflow@admin2026';
+    setTimeout(()=>err.textContent='', 4000);
   }
 }
 
 document.getElementById('logout-btn').addEventListener('click', () => {
-  document.getElementById('app-shell').style.display   = 'none';
+  document.getElementById('app-shell').style.display = 'none';
   document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('admin-pass-input').value = '';
+  document.getElementById('a-pass').value = '';
 });
 
-/* ──────────────────────────────────────────────
-   NAVIGATION
-────────────────────────────────────────────── */
-let mapInitialized = false;
-document.querySelectorAll('.sb-nav-item').forEach(item => {
+/* ── MOBILE SIDEBAR ── */
+const mobBtn = document.getElementById('mob-btn');
+const mobOv  = document.getElementById('mob-overlay');
+const sidebar = document.getElementById('sidebar');
+
+mobBtn.addEventListener('click', () => {
+  const open = sidebar.classList.toggle('open');
+  mobOv.classList.toggle('vis', open);
+  mobBtn.querySelector('i').className = open ? 'fas fa-times' : 'fas fa-bars';
+});
+mobOv.addEventListener('click', () => {
+  sidebar.classList.remove('open');
+  mobOv.classList.remove('vis');
+  mobBtn.querySelector('i').className = 'fas fa-bars';
+});
+
+/* ── NAV ── */
+let mapInited = false;
+document.querySelectorAll('.sb-item').forEach(item => {
   item.addEventListener('click', () => {
-    document.querySelectorAll('.sb-nav-item').forEach(i => i.classList.remove('active'));
-    document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));
+    document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
     item.classList.add('active');
-    const sectionId = 'section-' + item.dataset.section;
-    document.getElementById(sectionId)?.classList.add('active');
-    if (item.dataset.section === 'map' && !mapInitialized) {
-      setTimeout(initMap, 100);
-      mapInitialized = true;
+    document.getElementById('section-'+item.dataset.sec)?.classList.add('active');
+    if (item.dataset.sec === 'map' && !mapInited) { setTimeout(initMap,100); mapInited=true; }
+    // mobile: close sidebar after nav
+    if (window.innerWidth <= 768) {
+      sidebar.classList.remove('open'); mobOv.classList.remove('vis');
+      mobBtn.querySelector('i').className = 'fas fa-bars';
     }
   });
 });
 
-/* ──────────────────────────────────────────────
-   CLOCK
-────────────────────────────────────────────── */
+/* ── CLOCK ── */
 function updateClock() {
   const now = new Date();
-  const t = now.toLocaleTimeString('en-US', { hour12: false });
-  const d = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  const el = document.getElementById('live-clock');
+  const t = now.toLocaleTimeString('en-IN',{hour12:false});
+  const d = now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const el = document.getElementById('clock-display');
   const rt = document.getElementById('rt-clock');
-  if (el) el.textContent = d + '  ·  ' + t;
-  if (rt) rt.textContent = t;
+  if(el) el.textContent = d + ' · ' + t;
+  if(rt) rt.textContent = t;
 }
 setInterval(updateClock, 1000);
 updateClock();
 
-/* ──────────────────────────────────────────────
-   MAIN DASHBOARD INIT
-────────────────────────────────────────────── */
-let charts = {};
+/* ── CHARTS REGISTRY ── */
+const charts = {};
+function safeChart(id, key, cfg) {
+  if(charts[key]) { try{charts[key].destroy()}catch(e){} }
+  const ctx = document.getElementById(id);
+  if(!ctx) return;
+  // Destroy any lingering chart
+  const existing = Chart.getChart(ctx);
+  if(existing) existing.destroy();
+  charts[key] = new Chart(ctx, cfg);
+}
 
-function initDashboard() {
-  loadStats();
-  loadUsersTable();
-  loadVisitorsTable();
+const COPTS = {
+  responsive:true, maintainAspectRatio:false,
+  plugins:{ legend:{ labels:{ color:'rgba(255,255,255,0.55)', font:{size:11} } } }
+};
+
+/* ── INIT APP ── */
+function initApp() {
+  loadOverview();
+  loadUsers();
+  loadVisitors();
+  checkStorageStatus();
   startAutoRefresh();
 }
 
-function loadStats() {
+/* ── STORAGE STATUS ── */
+function checkStorageStatus() {
+  const users  = getUsers();
+  const visits = getVisits();
+  const bar    = document.getElementById('storage-status-bar');
+  if (!bar) return;
+  if (users.length === 0 && visits.length === 0) {
+    bar.className = 'status-bar warn';
+    bar.innerHTML = `<i class="fas fa-exclamation-triangle"></i>
+      <span>No data found in this browser's localStorage.
+      <strong>Open the main FitFlow app in the same browser, register a user, then come back here.</strong>
+      Or click the <strong>Data Debug</strong> tab → <strong>Add Sample User</strong> to test.</span>`;
+  } else {
+    bar.className = 'status-bar ok';
+    bar.innerHTML = `<i class="fas fa-check-circle"></i>
+      <span>Connected to localStorage &mdash; Found <strong>${users.length} user(s)</strong> and <strong>${visits.length} visit(s)</strong>.</span>`;
+  }
+}
+
+/* ── OVERVIEW ── */
+function loadOverview() {
   const visits = getVisits();
   const users  = getUsers();
+  const today  = todayStr();
+  const todayV = visits.filter(v=>v.date===today).length;
+  const uniqueIPs = new Set(visits.map(v=>v.ip)).size;
+  const countries = new Set(visits.map(v=>v.country).filter(c=>c&&c!=='Unknown')).size;
 
-  const totalVisits   = visits.length;
-  const uniqueIPs     = new Set(visits.map(v => v.ip)).size;
-  const today         = todayStr();
-  const todayVisits   = visits.filter(v => v.date === today).length;
-  const uniqueCountries = new Set(visits.map(v => v.country).filter(c => c !== 'Unknown')).size;
-  const lastVisit     = visits.length ? formatTime(visits[visits.length-1].timestamp) : '—';
+  setText('s-total', visits.length.toLocaleString());
+  setText('s-total-sub', todayV + ' today');
+  setText('s-unique', uniqueIPs.toLocaleString());
+  setText('s-unique-sub', visits.filter(v=>v.loggedIn).length + ' logged in');
+  setText('s-users', users.length);
+  setText('s-users-sub', users.length ? 'Latest: '+(users[users.length-1]?.name?.split(' ')[0]||'—') : 'No users yet');
+  setText('s-countries', countries||'—');
+  setText('s-countries-sub', topItem(visits,'country'));
+  setText('rt-today', todayV);
+  setText('rt-total', visits.length);
+  setText('rt-users', users.length);
 
-  // Update stat cards
-  document.getElementById('stat-total-visits').textContent = totalVisits.toLocaleString();
-  document.getElementById('stat-visits-sub').textContent   = `${todayVisits} today`;
-  document.getElementById('stat-unique-ips').textContent   = uniqueIPs.toLocaleString();
-  document.getElementById('stat-ips-sub').textContent      = `${visits.filter(v=>v.loggedIn).length} logged in`;
-  document.getElementById('stat-users').textContent        = users.length;
-  document.getElementById('stat-users-sub').textContent    = users.length > 0 ? `Latest: ${users[users.length-1]?.name?.split(' ')[0] || '—'}` : 'No users yet';
-  document.getElementById('stat-countries').textContent    = uniqueCountries || '—';
-  document.getElementById('stat-countries-sub').textContent = uniqueCountries ? `Most: ${topCountry(visits)}` : 'No data yet';
-
-  // Realtime bar
-  document.getElementById('rt-today').textContent      = todayVisits;
-  document.getElementById('rt-last-visit').textContent = lastVisit;
-
-  // Charts
   buildVisitsChart(visits);
   buildBrowserChart(visits);
   buildOSChart(visits);
   buildDeviceChart(visits);
-
-  // Refresh label
-  document.getElementById('last-refresh').textContent = 'Refreshed: ' + new Date().toLocaleTimeString();
+  setText('last-refresh-lbl','Updated: '+new Date().toLocaleTimeString());
 }
 
-function topCountry(visits) {
-  const c = countBy(visits.filter(v => v.country !== 'Unknown'), 'country');
-  const top = Object.entries(c).sort((a,b) => b[1]-a[1])[0];
-  return top ? top[0].slice(0,12) : '—';
-}
+function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
 
-/* ──────────────────────────────────────────────
-   CHARTS
-────────────────────────────────────────────── */
-const CHART_OPTS = {
-  responsive: true, maintainAspectRatio: false,
-  plugins: { legend: { labels: { color: 'rgba(255,255,255,0.6)', font: { size: 11 } } } }
-};
-
-function safeChart(id, key, cfg) {
-  if (charts[key]) { try { charts[key].destroy(); } catch(e){} }
-  const ctx = document.getElementById(id);
-  if (!ctx) return;
-  charts[key] = new Chart(ctx, cfg);
+function topItem(arr, key) {
+  const c = {};
+  arr.forEach(v => { if(v[key]&&v[key]!=='Unknown') c[v[key]]=(c[v[key]]||0)+1; });
+  const t = Object.entries(c).sort((a,b)=>b[1]-a[1])[0];
+  return t ? 'Top: '+t[0].slice(0,14) : 'No data';
 }
 
 function buildVisitsChart(visits) {
-  const days = [];
-  const counts = [];
-  for (let i = 6; i >= 0; i--) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const str = d.toISOString().split('T')[0];
-    days.push(d.toLocaleDateString('en-US', { month:'short', day:'numeric' }));
-    counts.push(visits.filter(v => v.date === str).length);
+  const labels=[], data=[];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const s = d.toISOString().split('T')[0];
+    labels.push(d.toLocaleDateString('en-IN',{month:'short',day:'numeric'}));
+    data.push(visits.filter(v=>v.date===s).length);
   }
-  safeChart('visits-chart', 'visits', {
-    type: 'bar',
-    data: {
-      labels: days,
-      datasets: [{ label: 'Visits', data: counts,
-        backgroundColor: 'rgba(0,212,255,0.6)', borderColor: '#00d4ff',
-        borderWidth: 1.5, borderRadius: 6 }]
-    },
-    options: { ...CHART_OPTS, plugins: { legend: { display: false } },
-      scales: {
-        x: { grid:{display:false}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} },
-        y: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}}, beginAtZero:true }
+  safeChart('chart-visits','visits',{
+    type:'bar',
+    data:{labels,datasets:[{label:'Visits',data,backgroundColor:'rgba(0,212,255,0.65)',borderColor:'#00d4ff',borderWidth:1.5,borderRadius:5}]},
+    options:{...COPTS,plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.45)',font:{size:10}}},
+        y:{grid:{color:'rgba(255,255,255,0.05)'},ticks:{color:'rgba(255,255,255,0.45)',font:{size:10}},beginAtZero:true}
       }
     }
   });
 }
 
 function buildBrowserChart(visits) {
-  const data = countBy(visits, 'browser');
-  safeChart('browser-chart', 'browsers', {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(data),
-      datasets: [{ data: Object.values(data),
-        backgroundColor: ['rgba(0,212,255,0.7)','rgba(168,85,247,0.7)','rgba(0,255,136,0.7)','rgba(255,170,0,0.7)','rgba(255,71,87,0.7)'],
-        borderColor: ['#00d4ff','#a855f7','#00ff88','#ffaa00','#ff4757'], borderWidth: 2 }]
-    },
-    options: { ...CHART_OPTS, cutout: '60%' }
+  const raw = {};
+  visits.forEach(v=>{ const k=v.browser||'Other'; raw[k]=(raw[k]||0)+1; });
+  if(!Object.keys(raw).length) raw['No data']=1;
+  safeChart('chart-browser','browser',{
+    type:'doughnut',
+    data:{labels:Object.keys(raw),datasets:[{data:Object.values(raw),
+      backgroundColor:['rgba(0,212,255,.7)','rgba(168,85,247,.7)','rgba(0,255,136,.7)','rgba(255,170,0,.7)','rgba(255,71,87,.7)'],
+      borderWidth:2}]},
+    options:{...COPTS,cutout:'58%'}
   });
 }
 
 function buildOSChart(visits) {
-  const data = countBy(visits, 'os');
-  safeChart('os-chart', 'os', {
-    type: 'bar',
-    data: {
-      labels: Object.keys(data),
-      datasets: [{ label: 'Visits', data: Object.values(data),
-        backgroundColor: 'rgba(168,85,247,0.6)', borderColor: '#a855f7',
-        borderWidth: 1.5, borderRadius: 6 }]
-    },
-    options: { ...CHART_OPTS, indexAxis: 'y', plugins: { legend: { display: false } },
-      scales: {
-        x: { grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} },
-        y: { grid:{display:false}, ticks:{color:'rgba(255,255,255,0.5)',font:{size:11}} }
+  const raw = {};
+  visits.forEach(v=>{ const k=v.os||'Unknown'; raw[k]=(raw[k]||0)+1; });
+  if(!Object.keys(raw).length) raw['No data']=1;
+  safeChart('chart-os','os',{
+    type:'bar',
+    data:{labels:Object.keys(raw),datasets:[{label:'Visits',data:Object.values(raw),
+      backgroundColor:'rgba(168,85,247,.65)',borderColor:'#a855f7',borderWidth:1.5,borderRadius:5}]},
+    options:{...COPTS,indexAxis:'y',plugins:{legend:{display:false}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,.05)'},ticks:{color:'rgba(255,255,255,.45)',font:{size:10}}},
+        y:{grid:{display:false},ticks:{color:'rgba(255,255,255,.45)',font:{size:10}}}
       }
     }
   });
 }
 
 function buildDeviceChart(visits) {
-  const data = countBy(visits, 'device');
-  safeChart('device-chart', 'device', {
-    type: 'doughnut',
-    data: {
-      labels: Object.keys(data),
-      datasets: [{ data: Object.values(data),
-        backgroundColor: ['rgba(0,255,136,0.7)','rgba(255,170,0,0.7)','rgba(255,71,87,0.7)'],
-        borderColor: ['#00ff88','#ffaa00','#ff4757'], borderWidth: 2 }]
-    },
-    options: { ...CHART_OPTS, cutout: '60%' }
+  const raw = {};
+  visits.forEach(v=>{ const k=v.device||'Unknown'; raw[k]=(raw[k]||0)+1; });
+  if(!Object.keys(raw).length) raw['No data']=1;
+  safeChart('chart-device','device',{
+    type:'doughnut',
+    data:{labels:Object.keys(raw),datasets:[{data:Object.values(raw),
+      backgroundColor:['rgba(0,255,136,.7)','rgba(255,170,0,.7)','rgba(255,71,87,.7)'],borderWidth:2}]},
+    options:{...COPTS,cutout:'58%'}
   });
 }
 
-/* ──────────────────────────────────────────────
-   USERS TABLE
-────────────────────────────────────────────── */
-function loadUsersTable(filter = '') {
-  const users  = getUsers().filter(u => !filter ||
-    u.name?.toLowerCase().includes(filter) || u.email?.toLowerCase().includes(filter));
-  const tbody  = document.getElementById('users-tbody');
-  const badge  = document.getElementById('user-count-badge');
-  if (badge) badge.textContent = `(${users.length})`;
-  if (!tbody) return;
-  if (users.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fas fa-user-slash"></i>No registered users yet. Users appear when people sign up.</div></td></tr>`;
+/* ── USERS TABLE ── */
+function loadUsers(filter='') {
+  const all   = getUsers();
+  const users = filter ? all.filter(u=>(u.name||'').toLowerCase().includes(filter)||(u.email||'').toLowerCase().includes(filter)) : all;
+  const badge = document.getElementById('u-count');
+  if(badge) badge.textContent = `(${all.length} total)`;
+  const tbody = document.getElementById('users-tbody');
+  if(!tbody) return;
+
+  if(all.length===0) {
+    tbody.innerHTML = `<tr><td colspan="9">
+      <div class="empty">
+        <i class="fas fa-user-slash"></i>
+        <h3>No registered users yet</h3>
+        <p>Open the <a href="index.html" target="_blank" style="color:var(--blue)">main FitFlow app</a> in this browser, create an account, then refresh this page.<br>
+        Or click <strong style="color:var(--amber)">Add Sample User</strong> to test.</p>
+      </div>
+    </td></tr>`;
     return;
   }
+  if(users.length===0) {
+    tbody.innerHTML = `<tr><td colspan="9"><div class="empty"><i class="fas fa-search"></i><p>No users match your search.</p></div></td></tr>`;
+    return;
+  }
+
   tbody.innerHTML = users.map(u => `
     <tr>
       <td>
-        <div class="user-row-info">
-          <div class="user-avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
+        <div class="user-cell">
+          <div class="avatar">${(u.name||'?').charAt(0).toUpperCase()}</div>
           <div>
-            <div style="font-weight:600;font-size:13px;">${u.name || '—'}</div>
-            <div style="font-size:11px;color:var(--muted);">ID: ${u.id?.slice(-6)||'—'}</div>
+            <div style="font-weight:600">${u.name||'—'}</div>
+            <div style="font-size:10px;color:var(--muted)">ID:${(u.id||'').slice(-6)}</div>
           </div>
         </div>
       </td>
-      <td style="color:var(--muted);">${u.email || '—'}</td>
-      <td>${u.goal ? `<span class="badge badge-blue">${goalLabel(u.goal)}</span>` : '—'}</td>
-      <td>
-        <div style="font-size:12px;">
-          <div>${u.weight||'—'} kg · ${u.height||'—'} cm</div>
-          <div style="color:var(--muted);">BMI: ${u.bmi||'—'} · ${u.gender||'—'} · ${u.age||'—'}y</div>
-        </div>
-      </td>
-      <td style="font-family:'Outfit',sans-serif;font-size:18px;font-weight:800;color:var(--amber);">${u.workoutsCompleted||0}</td>
-      <td style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:700;color:var(--green);">${(u.totalCalBurned||0).toLocaleString()}</td>
-      <td style="color:var(--muted);font-size:12px;">${u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—'}</td>
+      <td style="color:var(--muted)">${u.email||'—'}</td>
+      <td><span class="badge badge-blue">${goalLabel(u.goal)}</span></td>
+      <td>${u.weight||'—'} kg</td>
+      <td>${u.height||'—'} cm</td>
+      <td><span class="badge badge-${bmiColor(u.bmi)}">${u.bmi||'—'}</span></td>
+      <td style="font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:var(--amber)">${u.workoutsCompleted||0}</td>
+      <td style="font-weight:700;color:var(--green)">${(u.totalCalBurned||0).toLocaleString()}</td>
+      <td style="font-size:11px;color:var(--muted)">${u.createdAt?new Date(u.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—'}</td>
     </tr>
   `).join('');
 }
 
-document.getElementById('user-search')?.addEventListener('input', e => {
-  loadUsersTable(e.target.value.toLowerCase());
-});
+function bmiColor(bmi) {
+  if(!bmi) return 'gray';
+  if(bmi<18.5) return 'blue';
+  if(bmi<25)   return 'green';
+  if(bmi<30)   return 'amber';
+  return 'red';
+}
 
-/* ──────────────────────────────────────────────
-   VISITORS TABLE
-────────────────────────────────────────────── */
-function loadVisitorsTable(filter = '') {
-  const visits = getVisits().filter(v => !filter ||
-    v.ip?.includes(filter) || v.city?.toLowerCase().includes(filter) ||
-    v.country?.toLowerCase().includes(filter) || v.browser?.toLowerCase().includes(filter))
-    .reverse().slice(0, 100);
-  const tbody = document.getElementById('visitors-tbody');
-  const badge = document.getElementById('visitor-count-badge');
-  if (badge) badge.textContent = `(${getVisits().length} total)`;
-  if (!tbody) return;
-  if (visits.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><i class="fas fa-eye-slash"></i>No visitor data yet. Visit the app to start tracking.</div></td></tr>`;
+document.getElementById('user-search')?.addEventListener('input', e => loadUsers(e.target.value.toLowerCase()));
+
+/* ── VISITORS TABLE ── */
+function loadVisitors(filter='') {
+  const all    = getVisits();
+  const badge  = document.getElementById('v-count');
+  if(badge) badge.textContent = `(${all.length} total)`;
+  const filtered = (filter
+    ? all.filter(v=>(v.ip||'').includes(filter)||(v.city||'').toLowerCase().includes(filter)||(v.country||'').toLowerCase().includes(filter)||(v.browser||'').toLowerCase().includes(filter))
+    : all).slice().reverse().slice(0,150);
+  const tbody = document.getElementById('visits-tbody');
+  if(!tbody) return;
+
+  if(all.length===0) {
+    tbody.innerHTML = `<tr><td colspan="9">
+      <div class="empty">
+        <i class="fas fa-eye-slash"></i>
+        <h3>No visitor data yet</h3>
+        <p>Visit the <a href="index.html" target="_blank" style="color:var(--blue)">main app</a> to start tracking. Data appears after the page loads and the IP lookup completes (takes ~2 seconds).</p>
+      </div>
+    </td></tr>`;
     return;
   }
-  tbody.innerHTML = visits.map((v, i) => `
+
+  tbody.innerHTML = filtered.map((v,i) => `
     <tr>
-      <td style="color:var(--muted);font-size:12px;">${i+1}</td>
-      <td style="font-size:12px;white-space:nowrap;">${formatTime(v.timestamp)}</td>
+      <td style="color:var(--muted);font-size:11px">${i+1}</td>
+      <td style="font-size:11px;white-space:nowrap">${fmtTime(v.timestamp)}</td>
+      <td><code style="font-size:11px;background:rgba(0,212,255,.1);padding:2px 6px;border-radius:4px;color:var(--blue)">${v.ip||'—'}</code></td>
       <td>
-        <code style="font-size:11px;background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px;color:var(--blue);">${v.ip||'—'}</code>
-      </td>
-      <td>
-        <div style="display:flex;align-items:center;gap:6px;">
-          <span class="flag">${flagEmoji(v.countryCode)}</span>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:15px">${flag(v.countryCode)}</span>
           <div>
-            <div style="font-size:13px;font-weight:500;">${v.city||'—'}${v.region?', '+v.region:''}</div>
-            <div style="font-size:11px;color:var(--muted);">${v.country||'—'}</div>
+            <div style="font-size:12px;font-weight:500">${v.city||'—'}${v.region?', '+v.region:''}</div>
+            <div style="font-size:10px;color:var(--muted)">${v.country||'—'}</div>
           </div>
         </div>
       </td>
       <td><span class="badge badge-blue">${v.browser||'—'}</span></td>
-      <td style="font-size:12px;color:var(--muted);">${v.os||'—'}</td>
-      <td style="font-size:12px;"><span class="badge badge-${v.device==='Mobile'?'amber':v.device==='Tablet'?'purple':'green'}">${v.device||'—'}</span></td>
-      <td style="font-size:11px;color:var(--muted);">${v.screen||'—'}</td>
-      <td>${v.loggedIn ? `<span class="badge badge-green">✓ ${(v.userName||'').split(' ')[0]||'User'}</span>` : `<span style="font-size:11px;color:var(--muted);">Guest</span>`}</td>
+      <td style="font-size:12px;color:var(--muted)">${v.os||'—'}</td>
+      <td><span class="badge badge-${v.device==='Mobile'?'amber':v.device==='Tablet'?'purple':'green'}">${v.device||'—'}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${v.screen||'—'}</td>
+      <td>${v.loggedIn?`<span class="badge badge-green">✓ ${(v.userName||'User').split(' ')[0]}</span>`:'<span style="font-size:11px;color:var(--muted)">Guest</span>'}</td>
     </tr>
   `).join('');
 }
 
-document.getElementById('visitor-search')?.addEventListener('input', e => {
-  loadVisitorsTable(e.target.value.toLowerCase());
-});
+document.getElementById('visitor-search')?.addEventListener('input', e => loadVisitors(e.target.value.toLowerCase()));
 
-/* ──────────────────────────────────────────────
-   EXPORT CSV
-────────────────────────────────────────────── */
-document.getElementById('export-csv-btn')?.addEventListener('click', () => {
+/* ── CSV EXPORT ── */
+document.getElementById('export-btn')?.addEventListener('click', () => {
   const visits = getVisits();
-  if (visits.length === 0) { alert('No visitor data to export.'); return; }
-  const headers = ['ID','Timestamp','Date','IP','City','Region','Country','Country Code','Lat','Lon','Browser','OS','Device','Screen','Language','Referrer','Logged In','User Name','User Email','User Goal'];
-  const rows = visits.map(v => [
-    v.id, v.timestamp, v.date, v.ip, v.city, v.region, v.country, v.countryCode, v.lat, v.lon,
-    v.browser, v.os, v.device, v.screen, v.language, v.referrer,
-    v.loggedIn?'Yes':'No', v.userName, v.userEmail, v.userGoal
-  ].map(c => `"${(c||'').toString().replace(/"/g,'""')}"`).join(','));
-
-  const csv = [headers.join(','), ...rows].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
+  if(!visits.length){ alert('No visitor data to export.'); return; }
+  const h = ['ID','Timestamp','Date','IP','City','Region','Country','CountryCode','Lat','Lon','Browser','OS','Device','Screen','Language','Referrer','LoggedIn','UserName','UserEmail','UserGoal'];
+  const rows = visits.map(v=>[
+    v.id,v.timestamp,v.date,v.ip,v.city,v.region,v.country,v.countryCode,v.lat,v.lon,
+    v.browser,v.os,v.device,v.screen,v.language,v.referrer,
+    v.loggedIn?'Yes':'No',v.userName,v.userEmail,v.userGoal
+  ].map(c=>`"${(c||'').toString().replace(/"/g,'""')}"`).join(','));
+  const csv = [h.join(','),...rows].join('\n');
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = `fitflow_visitors_${new Date().toISOString().split('T')[0]}.csv`;
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `fitflow_visitors_${todayStr()}.csv`;
   a.click();
 });
 
-/* ──────────────────────────────────────────────
-   LEAFLET MAP
-────────────────────────────────────────────── */
-let leafletMap = null;
-
-function initMap() {
-  if (leafletMap) { leafletMap.remove(); leafletMap = null; }
-
-  leafletMap = L.map('visitor-map', { zoomControl: true }).setView([20, 0], 2);
-
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-    attribution: '© OpenStreetMap contributors © CARTO',
-    subdomains: 'abcd', maxZoom: 19
-  }).addTo(leafletMap);
-
-  const visits = getVisits().filter(v => v.lat !== 0 && v.lon !== 0);
-
-  // Group by IP to show unique visitors
-  const byIP = {};
-  visits.forEach(v => {
-    if (!byIP[v.ip]) byIP[v.ip] = v;
-    else if (v.loggedIn) byIP[v.ip] = v; // prefer logged-in record
-  });
-
-  Object.values(byIP).forEach(v => {
-    const color  = v.loggedIn ? '#00ff88' : '#00d4ff';
-    const marker = L.circleMarker([v.lat, v.lon], {
-      radius: 8, fillColor: color, color: color,
-      weight: 2, opacity: 0.9, fillOpacity: 0.55
-    });
-    marker.bindPopup(`
-      <div style="font-family:'Inter',sans-serif;min-width:160px;">
-        <div style="font-weight:700;margin-bottom:4px;">${flagEmoji(v.countryCode)} ${v.city}, ${v.country}</div>
-        <div style="font-size:12px;color:#888;">IP: ${v.ip}</div>
-        <div style="font-size:12px;color:#888;">Browser: ${v.browser} · ${v.os}</div>
-        <div style="font-size:12px;color:#888;">Last visit: ${formatTime(v.timestamp)}</div>
-        ${v.loggedIn ? `<div style="font-size:12px;color:#00ff88;margin-top:4px;">✓ Logged in: ${v.userName}</div>` : ''}
-      </div>
-    `);
-    marker.addTo(leafletMap);
-  });
-
-  // Map badge overlay
-  const visitorCount = Object.keys(byIP).length;
-  const info = L.control({ position: 'topright' });
-  info.onAdd = () => {
-    const div = L.DomUtil.create('div');
-    div.innerHTML = `<div style="background:rgba(0,0,0,0.7);border:1px solid rgba(0,212,255,0.3);border-radius:8px;padding:8px 14px;color:#00d4ff;font-family:Outfit,sans-serif;font-weight:800;font-size:14px;">
-      ${visitorCount} Unique Visitors
-    </div>`;
-    return div;
-  };
-  info.addTo(leafletMap);
-}
-
-/* ──────────────────────────────────────────────
-   REFRESH
-────────────────────────────────────────────── */
-document.getElementById('refresh-btn')?.addEventListener('click', () => {
-  loadStats();
-  loadUsersTable();
-  loadVisitorsTable();
-  if (mapInitialized) { initMap(); }
+/* ── CLEAR VISITS ── */
+document.getElementById('clear-visits-btn')?.addEventListener('click', () => {
+  if(confirm('Delete all visitor logs? This cannot be undone.')) {
+    localStorage.removeItem(VISIT_KEY);
+    loadVisitors();
+    loadOverview();
+    checkStorageStatus();
+  }
 });
 
-// Auto-refresh every 30 seconds
-function startAutoRefresh() {
-  setInterval(() => {
-    loadStats();
-    loadUsersTable(document.getElementById('user-search')?.value || '');
-    loadVisitorsTable(document.getElementById('visitor-search')?.value || '');
-    if (mapInitialized) initMap();
-  }, 30000);
+/* ── MAP ── */
+let leafMap = null;
+function initMap() {
+  if(leafMap){ leafMap.remove(); leafMap=null; }
+  leafMap = L.map('visitor-map').setView([20,0],2);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',{
+    attribution:'© OpenStreetMap © CARTO',subdomains:'abcd',maxZoom:19
+  }).addTo(leafMap);
+
+  const visits = getVisits().filter(v=>v.lat&&v.lon&&v.lat!==0&&v.lon!==0);
+  const byIP = {};
+  visits.forEach(v=>{ if(!byIP[v.ip]||v.loggedIn) byIP[v.ip]=v; });
+
+  Object.values(byIP).forEach(v=>{
+    const color = v.loggedIn ? '#00ff88' : '#00d4ff';
+    L.circleMarker([v.lat,v.lon],{radius:7,fillColor:color,color:color,weight:2,opacity:.9,fillOpacity:.55})
+     .bindPopup(`<div style="font-family:'Inter',sans-serif;min-width:155px;">
+        <b>${flag(v.countryCode)} ${v.city||'?'}, ${v.country||'?'}</b><br>
+        <span style="color:#888;font-size:12px">IP: ${v.ip}<br>
+        ${v.browser} · ${v.os}<br>
+        ${fmtTime(v.timestamp)}</span>
+        ${v.loggedIn?`<br><span style="color:#00ff88;font-size:12px">✓ ${v.userName}</span>`:''}
+      </div>`)
+     .addTo(leafMap);
+  });
 }
 
-    // Mobile sidebar toggle
-  const mobBtn = document.getElementById('mob-menu-btn');
-  const mobOv  = document.getElementById('mob-overlay');
-  const mobSb  = document.getElementById('sidebar');
-  mobBtn?.addEventListener('click', () => {
-    const open = mobSb.classList.toggle('mob-open');
-    mobOv.classList.toggle('visible', open);
-    mobBtn.querySelector('i').className = open ? 'fas fa-times' : 'fas fa-bars';
+/* ── DEBUG / DIAGNOSTIC ── */
+document.getElementById('run-diag-btn')?.addEventListener('click', runDiag);
+function runDiag() {
+  const out = document.getElementById('diag-output');
+  if(!out) return;
+  const keys = Object.keys(localStorage).filter(k=>k.startsWith('fitflow'));
+  if(keys.length===0) {
+    out.innerHTML = `<div class="debug-box"><pre>No FitFlow data found in localStorage.\n\nMake sure to:\n1. Open index.html in THIS SAME browser tab/window\n2. Register a user or just visit the app\n3. Come back here and click Run Diagnostic again</pre></div>`;
+    return;
+  }
+  let html = '';
+  keys.forEach(k => {
+    let val;
+    try { val = JSON.parse(localStorage.getItem(k)); } catch(e){ val = localStorage.getItem(k); }
+    const size = (localStorage.getItem(k)||'').length;
+    const summary = Array.isArray(val) ? `Array with ${val.length} items` : typeof val === 'object' ? `Object: ${Object.keys(val||{}).join(', ')}` : String(val).slice(0,80);
+    html += `<div class="debug-box"><strong style="color:var(--blue)">${k}</strong> <span style="color:var(--muted);font-size:10px">(${size} bytes)</span><pre>${summary}</pre></div>`;
   });
-  mobOv?.addEventListener('click', () => {
-    mobSb.classList.remove('mob-open');
-    mobOv.classList.remove('visible');
-    mobBtn.querySelector('i').className = 'fas fa-bars';
+  out.innerHTML = html;
+}
+
+/* ── SEED SAMPLE USER ── */
+function addSampleUser() {
+  const users = getUsers();
+  const sample = {
+    id: Date.now().toString(),
+    name: 'Sample User',
+    email: `sample${Math.floor(Math.random()*1000)}@fitflow.ai`,
+    password: 'sample123',
+    age: 22, gender: 'male', weight: 75, height: 175,
+    goal: 'fat-loss',
+    createdAt: new Date().toISOString(),
+    bmi: 24.5, bmr: 1800, tdee: 2200, bodyFat: 18.5,
+    weightHistory: [{ date: todayStr(), weight: 75 }],
+    workoutsCompleted: Math.floor(Math.random()*20),
+    totalCalBurned: Math.floor(Math.random()*5000),
+    streakDays: 3, lastWorkout: new Date().toISOString(),
+    scanResults: null, notes: '', progressLog: []
+  };
+  users.push(sample);
+  localStorage.setItem(USER_KEY, JSON.stringify(users));
+  loadUsers();
+  loadOverview();
+  checkStorageStatus();
+  alert(`Sample user "${sample.name}" added! Refresh the Users tab to see them.`);
+}
+
+document.getElementById('seed-btn')?.addEventListener('click', addSampleUser);
+document.getElementById('add-sample-btn')?.addEventListener('click', addSampleUser);
+
+/* ── SEED SAMPLE VISIT ── */
+document.getElementById('add-sample-visit-btn')?.addEventListener('click', () => {
+  const visits = getVisits();
+  const cities = [['Mumbai','MH','India','IN',19.07,72.87],['Delhi','DL','India','IN',28.61,77.21],
+                  ['New York','NY','United States','US',40.71,-74.01],['London','ENG','United Kingdom','GB',51.51,-0.13],
+                  ['Tokyo','TKY','Japan','JP',35.68,139.69]];
+  const c = cities[Math.floor(Math.random()*cities.length)];
+  const browsers = ['Chrome','Firefox','Safari','Edge'];
+  const oses = ['Windows','Android','iOS','macOS'];
+  const devices = ['Desktop','Mobile','Tablet'];
+  visits.push({
+    id: Date.now()+'_test',
+    timestamp: new Date().toISOString(),
+    date: todayStr(),
+    time: new Date().toLocaleTimeString(),
+    ip: `${Math.floor(Math.random()*200+50)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`,
+    city:c[0], region:c[1], country:c[2], countryCode:c[3], lat:c[4], lon:c[5],
+    browser:browsers[Math.floor(Math.random()*browsers.length)],
+    os:oses[Math.floor(Math.random()*oses.length)],
+    device:devices[Math.floor(Math.random()*devices.length)],
+    screen:'1920x1080', language:'en-IN', referrer:'direct', page:'index.html',
+    loggedIn:false, userName:'', userEmail:'', userGoal:''
   });
-  document.querySelectorAll('.sb-nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      if (window.innerWidth <= 768) {
-        mobSb.classList.remove('mob-open');
-        mobOv.classList.remove('visible');
-        mobBtn.querySelector('i').className = 'fas fa-bars';
-      }
-    });
-  });
+  localStorage.setItem(VISIT_KEY, JSON.stringify(visits));
+  loadVisitors();
+  loadOverview();
+  checkStorageStatus();
+  alert('Sample visit added!');
+});
+
+/* ── COPY INSTRUCTIONS ── */
+document.getElementById('copy-import-link')?.addEventListener('click', () => {
+  const text = `To see users in the FitFlow Admin Panel:\n1. Open https://singharnavkumar372-cloud.github.io/fitflow-ai/ in this SAME browser\n2. Click "Start Free Today" and register an account\n3. Come back to admin.html\n4. Click Refresh — your user will appear!\n\nNote: localStorage is browser-specific. Data only syncs within the same browser.`;
+  navigator.clipboard?.writeText(text).then(()=>alert('Instructions copied to clipboard!'));
+});
+
+/* ── REFRESH ── */
+document.getElementById('refresh-btn')?.addEventListener('click', refreshAll);
+
+function refreshAll() {
+  loadOverview();
+  loadUsers(document.getElementById('user-search')?.value||'');
+  loadVisitors(document.getElementById('visitor-search')?.value||'');
+  checkStorageStatus();
+  if(mapInited) initMap();
+}
+
+function startAutoRefresh() {
+  setInterval(refreshAll, 30000);
+}
 </script>
 </body>
 </html>
