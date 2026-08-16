@@ -412,3 +412,56 @@ const WaterTracker = {
 
 /* ─── Bootstrap ─── */
 document.addEventListener('DOMContentLoaded', () => App.init());
+
+/* ── MOBILE BOTTOM NAV ROUTING ── */
+(function() {
+  function hookBottomNav() {
+    document.querySelectorAll('.bottom-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const page = item.dataset.page;
+        if (page && typeof App !== 'undefined') App.navigate(page);
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', hookBottomNav);
+})();
+
+/* ── App.toast alias ── */
+App.toast = function(msg, type) { this.showToast(msg, type); };
+
+/* ── Extend navigate with new pages ── */
+(function() {
+  const _origNav = App.navigate.bind(App);
+  App.navigate = function(page) {
+    // Handle new feature pages
+    const newPages = {
+      'achievements':     typeof renderAchievements    !== 'undefined' ? renderAchievements    : null,
+      'calorie-diary':    typeof renderCalorieDiary    !== 'undefined' ? renderCalorieDiary    : null,
+      'measurements':     typeof renderMeasurements    !== 'undefined' ? renderMeasurements    : null,
+      'workout-history':  typeof renderWorkoutHistory  !== 'undefined' ? renderWorkoutHistory  : null
+    };
+
+    if (newPages[page] !== undefined) {
+      if (typeof WorkoutTimer !== 'undefined') WorkoutTimer.stop();
+      this.destroyPageCharts(this.currentPage || '');
+      this.currentPage = page;
+
+      // Update active state on sidebar + bottom nav
+      document.querySelectorAll('.nav-item, .bottom-nav-item').forEach(a => {
+        a.classList.toggle('active', a.dataset.page === page);
+      });
+      document.getElementById('main-content')?.scrollTo(0, 0);
+      const content = document.getElementById('page-content');
+      if (content) content.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+      if (newPages[page]) setTimeout(newPages[page], 60);
+    } else {
+      _origNav(page);
+      // Also sync bottom nav
+      setTimeout(() => {
+        document.querySelectorAll('.bottom-nav-item').forEach(a => {
+          a.classList.toggle('active', a.dataset.page === page);
+        });
+      }, 80);
+    }
+  };
+})();
