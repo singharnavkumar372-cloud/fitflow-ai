@@ -1097,12 +1097,62 @@ body::before {
   display: flex; align-items: center; justify-content: center;
   font-size: 20px; box-shadow: var(--glow-blue);
 }
+
 .ai-tip-title { font-size: 13px; font-weight: 700; color: var(--accent-blue); margin-bottom: 4px; }
 .ai-tip-body  { font-size: 14px; color: var(--text-secondary); line-height: 1.55; }
 
-/* ============================================================
-   Responsive (Desktop First — minor adjustments)
-   ============================================================ */
+/* Mobile Menu Button */
+.mobile-menu-btn {
+  display: none;
+  position: fixed; top: 14px; left: 14px; z-index: 200;
+  width: 42px; height: 42px; border-radius: 10px;
+  background: rgba(14,14,28,0.95);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter: blur(20px);
+  color: #fff; font-size: 16px;
+  cursor: pointer; align-items: center; justify-content: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+  transition: all 0.3s;
+}
+.mobile-menu-btn:hover { background: rgba(255,255,255,0.07); border-color: #00d4ff; }
+
+.sidebar-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7); z-index: 98;
+  backdrop-filter: blur(4px);
+}
+.sidebar-overlay.visible { display: block; }
+
+/* Sidebar Credit */
+.sidebar-credit {
+  padding: 12px 16px;
+  font-size: 11px; color: rgba(255,255,255,0.4);
+  text-align: center; line-height: 1.7;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+.sidebar-credit strong { color: #00d4ff; }
+
+/* App Footer */
+.app-footer {
+  margin-top: 40px; padding: 20px 36px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  background: rgba(10,10,20,0.6);
+}
+.footer-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center; gap: 16px;
+  flex-wrap: wrap; font-size: 13px; color: rgba(255,255,255,0.4);
+}
+.footer-brand {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: 14px; color: #fff;
+}
+.footer-credit strong { color: #00d4ff; }
+.footer-copy { margin-left: auto; }
+
+/* 1200px */
 @media (max-width: 1200px) {
   .stats-grid { grid-template-columns: repeat(2,1fr); }
   .quick-actions-grid { grid-template-columns: repeat(2,1fr); }
@@ -1111,6 +1161,8 @@ body::before {
   .body-metrics-grid { grid-template-columns: repeat(2,1fr); }
   .muscle-map-grid { grid-template-columns: repeat(3,1fr); }
 }
+
+/* 960px Tablet */
 @media (max-width: 960px) {
   :root { --sidebar-w: 220px; }
   #page-content { padding: 22px; }
@@ -1123,7 +1175,72 @@ body::before {
   .grid-2 { grid-template-columns: 1fr; }
   .log-form-inner { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 720px) {
+
+/* 768px Mobile */
+@media (max-width: 768px) {
+  .mobile-menu-btn { display: flex; }
+  #sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    z-index: 99;
+  }
+  #sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 50px rgba(0,0,0,0.7);
+  }
+  #main-content { margin-left: 0 !important; }
+  #page-content { padding: 66px 16px 24px; }
+  .page-title { font-size: 22px; }
+  .page-subtitle { font-size: 13px; }
+  .section-title-sm { font-size: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { padding: 14px; }
+  .grid-2, .chart-grid, .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+  .exercises-grid { grid-template-columns: 1fr; }
+  .filter-bar { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+  .filter-btn { flex-shrink: 0; }
+  .search-wrapper { margin-left: 0 !important; width: 100%; margin-top: 8px; }
+  .search-box { width: 100%; }
+  .modal-overlay { align-items: flex-end; padding: 0; }
+  .modal { max-height: 90vh; border-radius: 20px 20px 0 0; width: 100%; max-width: 100%; }
+  #auth-overlay { align-items: flex-end; padding: 0; }
+  .auth-modal { border-radius: 20px 20px 0 0; padding: 28px 20px; max-width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+  .hero-title { font-size: 30px; line-height: 1.2; }
+  .hero-subtitle { font-size: 14px; }
+  .hero-btns { flex-direction: column; width: 100%; }
+  .hero-btns .btn { width: 100%; justify-content: center; }
+  .hero-section { padding: 80px 20px 40px; }
+  .landing-nav { padding: 14px 18px; }
+  .landing-nav-links { display: none; }
+  .features-wrap { padding: 36px 20px; }
   .features-grid { grid-template-columns: 1fr; }
+  .landing-cta-section { padding: 36px 20px; }
+  .app-footer { padding: 16px 20px; }
+  .footer-inner { flex-direction: column; text-align: center; gap: 6px; }
+  .footer-copy { margin-left: 0; }
+  .diet-day-tabs { overflow-x: auto; flex-wrap: nowrap; }
+  .diet-tab { flex-shrink: 0; }
+  .log-form-inner { grid-template-columns: 1fr; }
+  .report-metrics-row { grid-template-columns: repeat(2,1fr); }
+  .body-metrics-grid { grid-template-columns: repeat(2,1fr); }
+  .muscle-map-grid { grid-template-columns: repeat(2,1fr); }
   .macro-summary-bar { grid-template-columns: repeat(2,1fr); }
+  .today-ex-item { flex-wrap: wrap; }
+  .today-ex-badge { width: 100%; }
+  .page-header.flex-between { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .quick-actions-grid { grid-template-columns: repeat(2,1fr); gap: 10px; }
+}
+
+/* 480px Small phones */
+@media (max-width: 480px) {
+  #page-content { padding: 60px 12px 20px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .stat-card { padding: 12px; }
+  .page-title { font-size: 19px; }
+  .hero-title { font-size: 24px; }
+  .section-title-sm { font-size: 14px; }
+  .quick-action-icon { font-size: 22px; }
+  .quick-action-label { font-size: 11px; }
+  .exercises-grid { gap: 8px; }
 }
