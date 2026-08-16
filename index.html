@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -176,10 +176,23 @@
         </button>
       </div>
 
+        <div class="nav-section-label">More Features</div>
+        <a href="#achievements" class="nav-item" data-page="achievements" id="nav-achievements">
+          <i class="fas fa-trophy"></i><span>Achievements</span>
+        </a>
+        <a href="#calorie-diary" class="nav-item" data-page="calorie-diary" id="nav-calorie-diary">
+          <i class="fas fa-utensils"></i><span>Calorie Diary</span>
+        </a>
+        <a href="#measurements" class="nav-item" data-page="measurements" id="nav-measurements">
+          <i class="fas fa-ruler"></i><span>Measurements</span>
+        </a>
+        <a href="#workout-history" class="nav-item" data-page="workout-history" id="nav-workout-history">
+          <i class="fas fa-history"></i><span>Workout History</span>
+        </a>
       <!-- Sidebar Credit -->
       <div class="sidebar-credit">
         Made by <strong>Arnav Singh</strong><br>
-        &copy; 2025 All Rights Reserved
+        &copy; 2026 All Rights Reserved
       </div>
     </aside>
 
@@ -197,7 +210,7 @@
             FitFlow AI
           </span>
           <span class="footer-credit">Created by <strong>Arnav Singh</strong></span>
-          <span class="footer-copy">&copy; 2025 All Rights Reserved</span>
+          <span class="footer-copy">&copy; 2026 All Rights Reserved</span>
         </div>
       </footer>
     </main>
@@ -252,6 +265,49 @@
         if (e.target.closest('.nav-item') && window.innerWidth <= 768) closeMenu();
       });
     })();
+  </script>
+
+  <!-- ── BOTTOM MOBILE NAV ── -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <div class="bottom-nav-item active" data-page="dashboard">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </div>
+    <div class="bottom-nav-item" data-page="workouts">
+      <i class="fas fa-dumbbell"></i>
+      <span>Workout</span>
+    </div>
+    <div class="bottom-nav-item" data-page="diet">
+      <i class="fas fa-utensils"></i>
+      <span>Diet</span>
+    </div>
+    <div class="bottom-nav-item" data-page="calorie-diary">
+      <i class="fas fa-fire"></i>
+      <span>Calories</span>
+    </div>
+    <div class="bottom-nav-item" data-page="progress">
+      <i class="fas fa-chart-line"></i>
+      <span>Progress</span>
+    </div>
+    <div class="bottom-nav-item" data-page="profile">
+      <i class="fas fa-user"></i>
+      <span>Profile</span>
+    </div>
+  </nav>
+  <script>
+    // Show bottom nav only when logged in
+    const _origShowApp = App.showApp.bind(App);
+    App.showApp = function(user) {
+      document.getElementById('bottom-nav')?.classList.remove('hidden');
+      document.getElementById('mobile-menu-btn')?.classList.add('hidden');
+      _origShowApp(user);
+    };
+    const _origShowLanding = App.showLanding.bind(App);
+    App.showLanding = function() {
+      document.getElementById('bottom-nav')?.classList.add('hidden');
+      document.getElementById('mobile-menu-btn')?.classList.add('hidden');
+      _origShowLanding();
+    };
   </script>
 </body>
 </html>
