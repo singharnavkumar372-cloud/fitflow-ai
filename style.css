@@ -1344,3 +1344,151 @@ body::before {
   .quick-actions-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
   .quick-action { padding: 10px 6px; }
 }
+
+/* ============================================================
+   MOBILE-FIRST COMPLETE RESPONSIVE OVERHAUL
+   ============================================================ */
+
+/* ── Form inputs — mobile native ── */
+.form-group input,
+.form-group select,
+.form-group textarea {
+  font-size: 16px !important; /* prevents iOS auto-zoom */
+  -webkit-appearance: none;
+  appearance: none;
+}
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23aaa' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px !important;
+}
+
+/* ── Scanner loading animation ── */
+@keyframes spin { 0%{transform:rotate(0deg)} 100%{transform:rotate(360deg)} }
+
+/* ── Video thumbnail hover ── */
+.cal-video-card { transition: transform 0.2s, box-shadow 0.2s; }
+.cal-video-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.5); }
+
+/* ── Exercise modal — full screen on mobile ── */
+@media (max-width:640px) {
+  .modal-overlay { align-items: flex-start !important; padding: 0 !important; }
+  .modal {
+    max-height: 100vh !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+}
+
+/* ── Page header responsive ── */
+@media (max-width:600px) {
+  .page-header.flex-between { flex-direction: column; align-items: flex-start !important; gap: 8px; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  .quick-actions-grid { grid-template-columns: repeat(3,1fr) !important; gap: 7px !important; }
+  .grid-2, .chart-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
+  #metrics-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+}
+
+/* ── Scanner form on mobile ── */
+@media (max-width:500px) {
+  .form-group input, .form-group select { padding: 10px 12px; font-size: 15px !important; }
+  #scan-form-section .card { padding: 16px; }
+  #metrics-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+}
+
+/* ── Calisthenics video grid ── */
+@media (max-width:640px) {
+  [style*="grid-template-columns:repeat(auto-fill,minmax(280px"] { grid-template-columns: 1fr !important; }
+  [style*="grid-template-columns:repeat(auto-fill,minmax(260px"] { grid-template-columns: 1fr !important; }
+}
+
+/* ── Weekly plan grid — mobile scroll ── */
+@media (max-width:480px) {
+  [style*="grid-template-columns:repeat(7,1fr)"] {
+    grid-template-columns: repeat(7, minmax(40px,1fr)) !important;
+    overflow-x: auto;
+    font-size: 10px;
+  }
+}
+
+/* ── Sidebar always visible on PC ── */
+@media (min-width:769px) {
+  #sidebar { transform: none !important; position: fixed !important; display: flex !important; }
+  #main-content { margin-left: var(--sidebar-w, 240px) !important; }
+  .mobile-menu-btn, #mob-btn { display: none !important; }
+  .sidebar-overlay, #mob-overlay { display: none !important; }
+  #bottom-nav { display: none !important; }
+}
+
+/* ── Tablet adjustments ── */
+@media (max-width: 1024px) and (min-width: 769px) {
+  :root { --sidebar-w: 200px; }
+  #page-content { padding: 20px; }
+}
+
+/* ── Fix auth modal on mobile ── */
+@media (max-width:600px) {
+  #auth-overlay { align-items: flex-end !important; padding: 0 !important; }
+  .auth-modal {
+    border-radius: 20px 20px 0 0 !important;
+    padding: 24px 18px !important;
+    max-width: 100% !important;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+}
+
+/* ── Toast — mobile position fix ── */
+@media (max-width:768px) {
+  #toast-container {
+    bottom: 80px !important; /* above bottom nav */
+    right: 12px;
+    left: 12px;
+  }
+  .toast { width: 100% !important; max-width: 100% !important; }
+}
+
+/* ── Bottom nav styling fix ── */
+.bottom-nav-item span { font-size: 9px !important; }
+.bottom-nav-item i { font-size: 19px !important; }
+.bottom-nav-item { padding: 6px 8px !important; }
+
+/* ── Scan results metrics ── */
+#metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 700px) { #metrics-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 380px) { #metrics-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; } }
+
+/* ── Muscle map grid ── */
+#muscle-map { display: grid !important; grid-template-columns: 1fr 1fr !important; }
+@media (max-width: 380px) { #muscle-map { grid-template-columns: 1fr !important; } }
+
+/* ── Make calisthenics section tabs scrollable on mobile ── */
+.cal-tab { white-space: nowrap; flex-shrink: 0; }
+
+/* ── Smooth scrolling ── */
+html { scroll-behavior: smooth; }
+
+/* ── Better touch targets ── */
+.btn { min-height: 40px; }
+.nav-item, .bottom-nav-item { min-height: 44px; }
+button { touch-action: manipulation; }
+a { touch-action: manipulation; }
+
+/* ── Prevent text overflow ── */
+.page-title { word-break: break-word; }
+.page-subtitle { word-break: break-word; }
+
+/* ── Safe area padding for iPhone ── */
+#main-content {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bottom-nav {
+  padding-bottom: max(6px, env(safe-area-inset-bottom, 6px));
+}
